@@ -8,7 +8,7 @@ import ResInterface.*;
 
 import java.util.*;
 import java.rmi.*;
-
+import exceptionPackage.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
@@ -478,13 +478,17 @@ public class HotelRM
     }
 	
     public int start() throws RemoteException{
+    	return 1;
     }
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
-    }
+   	return true; 
+   }
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{
+    	
     }	 
     public boolean shutdown() throws RemoteException{
+    	return true;
     }
 }
