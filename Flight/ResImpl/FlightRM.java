@@ -20,6 +20,7 @@ public class FlightRM
 	
 	protected RMHashtable m_itemHT = new RMHashtable();
     static ResourceManager rm = null;
+	
 
 	public static void main(String args[]) {
         // Figure out where server is running

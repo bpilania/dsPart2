@@ -130,6 +130,15 @@ public interface ResourceManager extends Remote
 
     /* reserve an itinerary */
     public boolean itinerary(int id,int customer,Vector flightNumbers,String location, boolean Car, boolean Room)
-	throws RemoteException; 
+	throws RemoteException;
+	
+    /*start a transaction*/
+    public int start() throws RemoteException; 
+    /*commit a transaction*/
+     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException;
+    /*abort a transaction*/ 
+    public void abort(int transactionId) throws RemoteException,InvalidTransactionException;
+   /*shutdown gracefully*/  
+   public boolean shutdown() throws RemoteException;
     			
 }
