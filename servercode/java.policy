@@ -1,0 +1,5 @@
+grant codeBase "file:~/Downloads/DS/servercode" {
+    permission java.security.AllPermission;
+};
+
+
