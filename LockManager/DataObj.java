@@ -1,4 +1,4 @@
-package LockManager;
+
 
 public class DataObj extends TrxnObj
 {

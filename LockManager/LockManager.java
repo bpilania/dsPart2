@@ -1,4 +1,4 @@
-package LockManager;
+
 
 import java.util.BitSet;
 import java.util.Vector;
@@ -209,7 +209,7 @@ public class LockManager
                     	throw new RedundantLockRequestException(dataObj.getXId(), "Redundant WRITE lock request");
                     }
                     else if(dataObj2.getLockType() == DataObj.READ) {
-			bitset.set(0) = true;
+			bitset.set(0);
                     }
                 }
             } 

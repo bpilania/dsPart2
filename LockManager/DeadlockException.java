@@ -1,4 +1,4 @@
-package LockManager;
+
 
 /*
     The transaction is deadlocked.  Somebody should abort it.
