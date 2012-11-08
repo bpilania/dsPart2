@@ -476,5 +476,16 @@ public class CarRM
     	
     	return reserveCar(id, customer, location);
     }
+ public int start() throws RemoteException{
+    }
+    
+    public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
+    }
+    
+    public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
+    }    
+public boolean shutdown() throws RemoteException{
+ }
+
 
 }
