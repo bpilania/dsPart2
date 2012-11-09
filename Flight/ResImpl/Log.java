@@ -37,5 +37,8 @@ class Log{
 		return (RMItem)logTable.get(key);
 	}
 	
-
+	int getSize(){
+		return logTable.size();
+	}
+	
 }

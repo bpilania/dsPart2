@@ -112,6 +112,7 @@ public class FlightRM
 		}
 	}
 	
+	
 	private int logContains(int xId){
 		synchronized(logArray){
 			for(int i=0;i<logArray.size();i++){
@@ -124,6 +125,11 @@ public class FlightRM
 		return -1;
 	}
 	
+	private boolean removeData(int xId){
+		int indx=logContains(xId);
+		logArray.remove(indx);
+		return true;
+	}
 	
 	// deletes the entire item
 	protected boolean deleteItem(int id, String key)
@@ -532,6 +538,7 @@ public class FlightRM
 	}
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
+    	
     	return true;	
     }
     
