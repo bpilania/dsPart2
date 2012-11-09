@@ -426,7 +426,8 @@ public class ResourceManagerImpl
     	
     }
 	  public int start() throws RemoteException{
-		return 1;
+	  	xID = xID + 1;
+		return xID;
     }
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{

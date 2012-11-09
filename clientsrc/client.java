@@ -30,7 +30,7 @@ public class client
 	    int numRooms;
 	    int numCars;
 	    String location;
-
+	    int xID = 0;
 
 	    String server = "localhost";
 	    if (args.length == 1) 
@@ -48,7 +48,8 @@ public class client
 		    // get the proxy and the remote reference by rmiregistry lookup
 		    rm = (ResourceManager) registry.lookup("Group4ResourceManager");
 		    if(rm!=null)
-			{
+			{   
+
 			    System.out.println("Successful");
 			    System.out.println("Connected to RM");
 			}
@@ -103,6 +104,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Adding a new Flight using id: "+arguments.elementAt(1));
 		    System.out.println("Flight number: "+arguments.elementAt(2));
 		    System.out.println("Add Flight Seats: "+arguments.elementAt(3));
@@ -130,6 +138,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Adding a new Car using id: "+arguments.elementAt(1));
 		    System.out.println("Car Location: "+arguments.elementAt(2));
 		    System.out.println("Add Number of Cars: "+arguments.elementAt(3));
@@ -155,6 +170,13 @@ public class client
 		    if(arguments.size()!=5){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Adding a new Room using id: "+arguments.elementAt(1));
 		    System.out.println("Room Location: "+arguments.elementAt(2));
@@ -182,6 +204,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Adding a new Customer using id:"+arguments.elementAt(1));
 		    try{
 			Id = obj.getInt(arguments.elementAt(1));
@@ -199,6 +228,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Deleting a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Flight Number: "+arguments.elementAt(2));
@@ -221,6 +257,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Deleting the cars from a particular location  using id: "+arguments.elementAt(1));
 		    System.out.println("Car Location: "+arguments.elementAt(2));
@@ -245,6 +288,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Deleting all rooms from a particular location  using id: "+arguments.elementAt(1));
 		    System.out.println("Room Location: "+arguments.elementAt(2));
 		    try{
@@ -266,6 +316,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Deleting a customer from the database using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
@@ -289,6 +346,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Querying a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Flight number: "+arguments.elementAt(2));
 		    try{
@@ -308,6 +372,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Querying a car location using id: "+arguments.elementAt(1));
 		    System.out.println("Car location: "+arguments.elementAt(2));
@@ -329,6 +400,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Querying a room location using id: "+arguments.elementAt(1));
 		    System.out.println("Room location: "+arguments.elementAt(2));
 		    try{
@@ -348,6 +426,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Querying Customer information using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
@@ -369,6 +454,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Querying a flight Price using id: "+arguments.elementAt(1));
 		    System.out.println("Flight number: "+arguments.elementAt(2));
 		    try{
@@ -388,6 +480,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Querying a car price using id: "+arguments.elementAt(1));
 		    System.out.println("Car location: "+arguments.elementAt(2));
@@ -409,6 +508,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Querying a room price using id: "+arguments.elementAt(1));
 		    System.out.println("Room Location: "+arguments.elementAt(2));
 		    try{
@@ -428,6 +534,13 @@ public class client
 		    if(arguments.size()!=4){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Reserving a seat on a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
@@ -452,6 +565,13 @@ public class client
 		    if(arguments.size()!=4){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Reserving a car at a location using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
@@ -479,6 +599,13 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
+		    }
 		    System.out.println("Reserving a room at a location using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    System.out.println("Location: "+arguments.elementAt(3));
@@ -503,6 +630,13 @@ public class client
 		    if(arguments.size()<7){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Reserving an Itinerary using id:"+arguments.elementAt(1));
 		    System.out.println("Customer id:"+arguments.elementAt(2));
@@ -546,6 +680,13 @@ public class client
 		    if(arguments.size()!=3){
 			obj.wrongNumber();
 			break;
+		    }
+		    try{
+		    	if(xID == 0){
+		    		xID = rm.start();
+		    	}
+		    }catch(RemoteException E){
+		    	System.out.println("Remote exception occoured! Transaction failed!");
 		    }
 		    System.out.println("Adding a new Customer using id:"+arguments.elementAt(1) + " and cid " +arguments.elementAt(2));
 		    try{
