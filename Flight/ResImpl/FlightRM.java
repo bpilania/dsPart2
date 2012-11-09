@@ -26,13 +26,7 @@ public class FlightRM
         // Figure out where server is running
         String server = "localhost";
 
-         /*if (args.length == 1) {
-             server = server + ":" + args[0];
-         } else if (args.length != 0 &&  args.length != 1) {
-             System.err.println ("Wrong usage");
-             System.out.println("Usage: java ResImpl.CarRM [port]");
-             System.exit(1);
-         }*/
+         
 
 	 try 
 	     {
@@ -101,7 +95,7 @@ public class FlightRM
 	}
 	
 	
-	private void writeDataToLog(int xId, String key, RMItem value){
+	private void writeDataToLog(int xId, String key, RMItem value,int flag){
 		synchronized(logArray){
 			Log temp;
 			int indx;
@@ -125,7 +119,7 @@ public class FlightRM
 		return -1;
 	}
 	
-	private boolean removeData(int xId){
+	protected boolean removeDataFromLog(int xId){
 		int indx=logContains(xId);
 		logArray.remove(indx);
 		return true;
@@ -222,8 +216,8 @@ public class FlightRM
 			
 			writeData( id, newObj.getKey(), newObj );
 			String key=newObj.getKey();
-			newObj=null;
-			writeDataToLog(id,key,newObj);
+			
+			writeDataToLog(id,key,newObj,0);
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
 		} else {
@@ -538,11 +532,14 @@ public class FlightRM
 	}
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
-    	
+    	removeDataFromLog(transactionId);
     	return true;	
     }
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
+    	Log temp=(Log)logArray.elementAt(logContains(transactionId));
+    	Vector val= temp.getValues();
+    	
     	
     }    
  public boolean shutdown() throws RemoteException{
