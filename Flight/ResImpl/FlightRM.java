@@ -13,11 +13,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-//public class CarRM extends java.rmi.server.UnicastRemoteObject
+//public class FlightRM extends java.rmi.server.UnicastRemoteObject
 public class FlightRM
 	implements ResourceManager {
 	
 	protected RMHashtable m_itemHT = new RMHashtable();
+	Vector logArray =new Vector();
     static ResourceManager rm = null;
 	
 
@@ -81,6 +82,7 @@ public class FlightRM
 		}
 	}
 	
+
 	// Remove the item out of storage
 	protected RMItem removeData(int id, String key){
 		synchronized(m_itemHT){
