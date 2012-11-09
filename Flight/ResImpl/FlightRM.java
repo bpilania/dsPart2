@@ -95,7 +95,7 @@ public class FlightRM
 	}
 	
 	
-	private void writeDataToLog(int xId, String key, RMItem value,int flag){
+	private void writeDataToLog(int xId, String key, RMItem value){
 		synchronized(logArray){
 			Log temp;
 			int indx;
@@ -217,7 +217,7 @@ public class FlightRM
 			writeData( id, newObj.getKey(), newObj );
 			String key=newObj.getKey();
 			
-			writeDataToLog(id,key,newObj,0);
+			writeDataToLog(id,key,newObj);
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
 		} else {

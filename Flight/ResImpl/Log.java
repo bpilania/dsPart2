@@ -5,7 +5,6 @@ class Log{
 	
 	int xId;
 	String key;
-	int flag;
 	RMHashtable logTable =new RMHashtable();
 	Log(){
 		super();
@@ -13,8 +12,6 @@ class Log{
 	Log(int xId,RMHashtable log,String key,int flag){
 		this.xId=xId;
 		this.logTable=log;
-		this.key=key;
-		this.flag=flag;
 	}
 	
 	int getXId(){
@@ -46,7 +43,7 @@ class Log{
 	}
 	
 	Vector getValues(){
-		return (vector)logTable.values;
+		return (Vector)logTable.values();
 	}
 	
 }
