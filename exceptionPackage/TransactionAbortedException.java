@@ -1,5 +1,6 @@
 package exceptionPackage;
 public class TransactionAbortedException extends Exception{
-	TransactionAbortedException(){
+	public TransactionAbortedException(String msg){
+			super(msg);
 	}
 }

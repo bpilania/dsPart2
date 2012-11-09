@@ -1,4 +1,4 @@
-
+package LockManager;
 
 import java.util.BitSet;
 import java.util.Vector;
@@ -80,6 +80,7 @@ public class LockManager
             }
         } 
         catch (DeadlockException deadlock) {
+        	System.out.println("Deadlock detected");
             throw deadlock;
         }
         catch (RedundantLockRequestException redundantlockrequest) {

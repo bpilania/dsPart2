@@ -23,6 +23,10 @@ public class ResourceManagerImpl
     static ResourceManager rmCar = null;
     static ResourceManager rmHotel = null;
     static ResourceManager rmFlight = null;
+    static int xID = 0;
+    static LockManager lm=null;
+
+    
 
 	public static void main(String args[]) {
         // Figure out where server is running
@@ -61,6 +65,8 @@ public class ResourceManagerImpl
 	rmFlight = connection("Group4FlightRM", server, port);
 	 
 	 //Code as client ends
+	 
+	 lm = new LockManager();
 	 	 
          // Create and install a security manager
 /*
@@ -197,10 +203,23 @@ public class ResourceManagerImpl
 	// Create a new flight, or add seats to existing flight
 	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
 	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		
 
-		return rmFlight.addFlight(id, flightNum, flightSeats, flightPrice) ;
 	}
 
 
@@ -208,6 +227,7 @@ public class ResourceManagerImpl
 	public boolean deleteFlight(int id, int flightNum)
 		throws RemoteException
 	{
+		//lm.Lock (id, "flight", LockManager.WRITE);
 		return rmFlight.deleteFlight(id, flightNum);
 	}
 
@@ -425,16 +445,39 @@ public class ResourceManagerImpl
     	
     	
     }
-	  public int start() throws RemoteException{
-	  	xID = xID + 1;
-		return xID;
+    
+    public int start() throws RemoteException{
+  	xID = xID + 1;
+	return xID;
     }
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
-	return true;
+   	 try{
+		if((rmCar.commit(transactionId) == true ) && (rmFlight.commit(transactionId) == true) && (rmHotel.commit(transactionId) == true)){
+			lm.UnlockAll(transactionId);
+			return true;
+		}
+		else{
+			lm.UnlockAll(transactionId);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+transactionId+" has been aborted!");
+		}
+	}catch(InvalidTransactionException e){
+		lm.UnlockAll(transactionId);
+			throw new InvalidTransactionException("Server could not process your request. Transaction "+transactionId+" is invalid!");
+	}
     }
     
-    public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
+    public void abort(int transactionId) throws RemoteException,InvalidTransactionException{
+    	try{
+	    	rmCar.abort(transactionId);    
+	    	rmFlight.abort(transactionId);    
+	    	rmHotel.abort(transactionId);
+	    	lm.UnlockAll(transactionId);    
+	}catch(InvalidTransactionException e){
+	    	lm.UnlockAll(transactionId);    
+		throw new InvalidTransactionException("Server could not process your request. Transaction "+transactionId+" is invalid!");
+	}
+	
     }    
  public boolean shutdown() throws RemoteException{
 	return true;
