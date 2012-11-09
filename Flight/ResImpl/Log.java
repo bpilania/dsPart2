@@ -28,4 +28,14 @@ class Log{
 	void setLog(RMHashtable log){
 		this.logTable=log;
 	}
+	
+	void put(String key,RMItem value){
+		logTable.put(key,value);
+	}
+	
+	RMItem get(String key){
+		return (RMItem)logTable.get(key);
+	}
+	
+
 }
