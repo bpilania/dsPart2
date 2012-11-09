@@ -26,13 +26,7 @@ public class FlightRM
         // Figure out where server is running
         String server = "localhost";
 
-         /*if (args.length == 1) {
-             server = server + ":" + args[0];
-         } else if (args.length != 0 &&  args.length != 1) {
-             System.err.println ("Wrong usage");
-             System.out.println("Usage: java ResImpl.CarRM [port]");
-             System.exit(1);
-         }*/
+         
 
 	 try 
 	     {
@@ -112,6 +106,7 @@ public class FlightRM
 		}
 	}
 	
+	
 	private int logContains(int xId){
 		synchronized(logArray){
 			for(int i=0;i<logArray.size();i++){
@@ -124,6 +119,11 @@ public class FlightRM
 		return -1;
 	}
 	
+	protected boolean removeDataFromLog(int xId){
+		int indx=logContains(xId);
+		logArray.remove(indx);
+		return true;
+	}
 	
 	// deletes the entire item
 	protected boolean deleteItem(int id, String key)
@@ -206,19 +206,25 @@ public class FlightRM
 	// Create a new flight, or add seats to existing flight
 	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
 	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-		throws RemoteException
+		throws RemoteException,InvalidTransactionException,TransactionAbortedException
 	{
 		Trace.info("RM::addFlight(" + id + ", " + flightNum + ", $" + flightPrice + ", " + flightSeats + ") called" );
 		Flight curObj = (Flight) readData( id, Flight.getKey(flightNum) );
 		if( curObj == null ) {
 			// doesn't exist...add it
 			Flight newObj = new Flight( flightNum, flightSeats, flightPrice );
+			
 			writeData( id, newObj.getKey(), newObj );
+			String key=newObj.getKey();
+			
+			writeDataToLog(id,key,newObj);
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
 		} else {
 			// add seats to existing flight and update the price...
+			writeDataToLog(id,curObj.getKey(),curObj);
 			curObj.setCount( curObj.getCount() + flightSeats );
+			
 			if( flightPrice > 0 ) {
 				curObj.setPrice( flightPrice );
 			} // if
@@ -526,10 +532,14 @@ public class FlightRM
 	}
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
+    	removeDataFromLog(transactionId);
     	return true;	
     }
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
+    	Log temp=(Log)logArray.elementAt(logContains(transactionId));
+    	Vector val= temp.getValues();
+    	
     	
     }    
  public boolean shutdown() throws RemoteException{
