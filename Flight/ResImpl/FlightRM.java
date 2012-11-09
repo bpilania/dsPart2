@@ -136,6 +136,7 @@ public class FlightRM
 			return false;
 		} else {
 			if(curObj.getReserved()==0){
+				writeDataToLog(id,curObj.getKey(),curObj);
 				removeData(id, curObj.getKey());
 				Trace.info("RM::deleteItem(" + id + ", " + key + ") item deleted" );
 				return true;
@@ -216,7 +217,7 @@ public class FlightRM
 			
 			writeData( id, newObj.getKey(), newObj );
 			String key=newObj.getKey();
-			
+			newObj.setCount(-1);
 			writeDataToLog(id,key,newObj);
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
@@ -418,6 +419,7 @@ public class FlightRM
 								String.valueOf( Math.round( Math.random() * 100 + 1 )));
 		Customer cust = new Customer( cid );
 		writeData( id, cust.getKey(), cust );
+		writeDataToLog(id,cust.getKey(),cust);
 		Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid );
 		return cid;
 	}
@@ -431,6 +433,7 @@ public class FlightRM
 		if( cust == null ) {
 			cust = new Customer(customerID);
 			writeData( id, cust.getKey(), cust );
+			writeDataToLog(id,cust.getKey(),cust);
 			Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") created a new customer" );
 			return true;
 		} else {
@@ -539,7 +542,16 @@ public class FlightRM
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
     	Log temp=(Log)logArray.elementAt(logContains(transactionId));
     	Vector val= temp.getValues();
-    	
+ 	for(int i=0;i<val.size();i++){
+ 		Flight flightObj=(Flight)val.elementAt(i);
+ 		if(flightObj.getCount()==-1){
+ 			removeData(transactionId,flightObj.getKey());
+ 		}
+ 		else{
+ 			writeData(transactionId,flightObj.getKey(),flightObj);
+ 			
+ 		}
+ 	}   	
     	
     }    
  public boolean shutdown() throws RemoteException{
