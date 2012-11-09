@@ -8,11 +8,12 @@ import ResInterface.*;
 
 import java.util.*;
 import java.rmi.*;
-
+import exceptionPackage.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import LockManager.*;
 
 //public class ResourceManagerImpl extends java.rmi.server.UnicastRemoteObject
 public class ResourceManagerImpl
@@ -425,14 +426,17 @@ public class ResourceManagerImpl
     	
     }
 	  public int start() throws RemoteException{
+		return 1;
     }
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
+	return true;
     }
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
     }    
- boolean shutdown() throws RemoteException{
+ public boolean shutdown() throws RemoteException{
+	return true;
  }
 
 
