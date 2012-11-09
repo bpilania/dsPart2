@@ -31,7 +31,7 @@ public interface ResourceManager extends Remote
      * @return success.
      */
     public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice) 
-	throws RemoteException; 
+	throws RemoteException,InvalidTransactionException,TransactionAbortedException; 
     
     /* Add cars to a location.  
      * This should look a lot like addFlight, only keyed on a string location
@@ -106,7 +106,6 @@ public interface ResourceManager extends Remote
     /* queryFlightPrice returns the price of a seat on this flight. */
     public int queryFlightPrice(int id, int flightNumber) 
 	throws RemoteException; 
-
     /* return the price of a car at a location */
     public int queryCarsPrice(int id, String location) 
 	throws RemoteException; 
