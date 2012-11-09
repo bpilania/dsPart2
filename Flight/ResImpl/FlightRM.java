@@ -213,12 +213,18 @@ public class FlightRM
 		if( curObj == null ) {
 			// doesn't exist...add it
 			Flight newObj = new Flight( flightNum, flightSeats, flightPrice );
+			
 			writeData( id, newObj.getKey(), newObj );
+			String key=newObj.getKey();
+			newObj=null;
+			writeDataToLog(id,key,newObj);
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
 		} else {
 			// add seats to existing flight and update the price...
+			writeDataToLog(id,curObj.getKey(),curObj);
 			curObj.setCount( curObj.getCount() + flightSeats );
+			
 			if( flightPrice > 0 ) {
 				curObj.setPrice( flightPrice );
 			} // if
