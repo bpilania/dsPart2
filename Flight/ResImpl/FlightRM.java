@@ -13,11 +13,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-//public class CarRM extends java.rmi.server.UnicastRemoteObject
+//public class FlightRM extends java.rmi.server.UnicastRemoteObject
 public class FlightRM
 	implements ResourceManager {
 	
 	protected RMHashtable m_itemHT = new RMHashtable();
+	Vector logArray =new Vector();
     static ResourceManager rm = null;
 	
 
@@ -81,11 +82,46 @@ public class FlightRM
 		}
 	}
 	
+
 	// Remove the item out of storage
 	protected RMItem removeData(int id, String key){
 		synchronized(m_itemHT){
 			return (RMItem)m_itemHT.remove(key);
 		}
+	}
+	private RMItem readDataFromLog(int id,String key,int xId){
+		synchronized(logArray){
+			int indx;
+			if((indx=logContains(xId))!=-1){
+				Log temp=(Log)logArray.elementAt(indx);
+				return (RMItem)temp.get(key);
+			}		
+		}
+		return null;
+	}
+	
+	
+	private void writeDataToLog(int xId, String key, RMItem value){
+		synchronized(logArray){
+			Log temp;
+			int indx;
+			if((indx=logContains(xId))!=-1){
+				temp=(Log)logArray.elementAt(indx);
+				temp.put(key,value);
+			}	
+		}
+	}
+	
+	private int logContains(int xId){
+		synchronized(logArray){
+			for(int i=0;i<logArray.size();i++){
+				Log temp=(Log)logArray.elementAt(i);
+				if(temp.getXId()==xId){
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 	
 	
