@@ -128,13 +128,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -170,13 +168,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -212,13 +208,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -246,13 +240,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -284,13 +276,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -325,13 +315,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -363,13 +351,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -401,13 +387,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -438,13 +422,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -474,13 +456,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -510,13 +490,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -546,13 +524,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -582,13 +558,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -618,13 +592,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -654,13 +626,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -694,13 +664,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -736,13 +704,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -777,13 +743,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -827,13 +791,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -848,6 +810,26 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	rm.abort(xID);
+		    	xID=0;
+		    }catch(InvalidTransactionException e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }catch(RemoteException e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println("Remote exception occoured! Transaction failed!");
+			System.out.println(e.getMessage());
+		    }
+		    catch(Exception e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		    }
+
 		    System.out.println("Quitting client.");
 		    System.exit(1);
 		    
@@ -871,13 +853,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -895,14 +875,18 @@ public class client
 			    try{
 			    	if(xID == 0){
 			    		xID = rm.start();
+			    		System.out.println("Transaction with transaction ID "+xID+" has been started.");
 			    	}
 			    	else{
 			    		System.out.println("Transaction with transaction ID "+xID+" is already running. Cannot start a new transaction.");
 			    	}
 			    }catch(RemoteException e){
+			    	xID=0;
+			    	e.printStackTrace();
 			    	System.out.println("Remote exception occoured! Transaction failed!");
 			    }
 			    catch(Exception e){
+			    	xID=0;
 				System.out.println("EXCEPTION:");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
@@ -919,26 +903,29 @@ public class client
 	    		break;
 		    }
 		    try{
-		    	if(rm.commit(xID))
+		    	if(rm.commit(xID)){
 		    		System.out.println("Transaction "+xID+" committed successfully!");
+		    		xID=0;
+		    	}
 		    	else
 		    		System.out.println("Transaction "+xID+" could not be committed!");
 		    	
 		    }catch(InvalidTransactionException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }catch(RemoteException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println("Remote exception occoured! Transaction failed!");
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -956,16 +943,19 @@ public class client
 		    }
 		    try{
 		    	rm.abort(xID);
+		    	xID=0;
 		    }catch(InvalidTransactionException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }catch(RemoteException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println("Remote exception occoured! Transaction failed!");
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -1261,7 +1251,7 @@ public class client
 			System.out.println("\ncommit");
 			break;
 	   
-	    case 24:  //aborting a transaction
+	    case 25:  //aborting a transaction
 			System.out.println("aborting a transaction with server");
 			System.out.println("Purpose:");
 			System.out.println("\tTo abort the transaction");
