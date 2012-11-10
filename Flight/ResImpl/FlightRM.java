@@ -207,8 +207,9 @@ public class FlightRM
 		}else{			
 			Customer temp=cust.clone();
 			temp.setType(1);
-			if(readDataFromLog(id,cust.getKey(),id)==null)
+			if(readDataFromLog(id,cust.getKey(),id)==null){
 				writeDataToLog(id,cust.getKey(),temp);
+			}
 			cust.reserve( key, location, item.getPrice());
 					
 			writeData( id, cust.getKey(), cust );
@@ -486,6 +487,7 @@ public class FlightRM
 	{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
+		Customer temp=cust.clone();
 		if( cust == null ) {
 			Trace.warn("RM::deleteCustomer(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return false;
@@ -505,8 +507,9 @@ public class FlightRM
 			}
 			
 			// remove the customer from the storage
-			cust.setType(1);
-			writeDataToLog(id,cust.getKey(),cust);
+			temp.setType(1);
+			if(readDataFromLog(id,cust.getKey(),id)==null)
+				writeDataToLog(id,cust.getKey(),temp);
 			removeData(id, cust.getKey());
 			
 			Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") succeeded" );
