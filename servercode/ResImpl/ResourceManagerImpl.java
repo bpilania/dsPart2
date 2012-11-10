@@ -206,7 +206,7 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
 		try{
-		if(lm.Lock (id, "flight", LockManager.WRITE)){
+		if(lm.Lock (id, "flight"+flightNum.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
 			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
 		}
@@ -225,10 +225,22 @@ public class ResourceManagerImpl
 
 	
 	public boolean deleteFlight(int id, int flightNum)
-		throws RemoteException
-	{
-		//lm.Lock (id, "flight", LockManager.WRITE);
-		return rmFlight.deleteFlight(id, flightNum);
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
+	{	
+		try{
+		if(lm.Lock (id, "flight"+flightNum.trim().toString(), LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//return rmFlight.deleteFlight(id, flightNum);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		
 	}
 
 
@@ -236,15 +248,43 @@ public class ResourceManagerImpl
 	// Create a new room location or add rooms to an existing location
 	//  NOTE: if price <= 0 and the room location already exists, it maintains its current price
 	public boolean addRooms(int id, String location, int count, int price)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
-		return rmHotel.addRooms(id, location, count, price);
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//return rmHotel.addRooms(id, location, count, price);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
+		
 	}
 
 	// Delete rooms from a location
 	public boolean deleteRooms(int id, String location)
 		throws RemoteException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmHotel.deleteRooms(id, location);
 		
 	}
@@ -252,8 +292,22 @@ public class ResourceManagerImpl
 	// Create a new car location or add cars to an existing location
 	//  NOTE: if price <= 0 and the location already exists, it maintains its current price
 	public boolean addCars(int id, String location, int count, int price)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		rmCar.addCars(id, location, count, price);
 		return(true);
 	}
@@ -261,8 +315,22 @@ public class ResourceManagerImpl
 
 	// Delete cars from a location
 	public boolean deleteCars(int id, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmCar.deleteCars(id, location);
 	}
 
@@ -270,48 +338,132 @@ public class ResourceManagerImpl
 
 	// Returns the number of empty seats on this flight
 	public int queryFlight(int id, int flightNum)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmFlight.queryFlight(id, flightNum);
 	}
 
 
 	// Returns price of this flight
 	public int queryFlightPrice(int id, int flightNum )
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmFlight.queryFlightPrice(id, flightNum);
 	}
 
 
 	// Returns the number of rooms available at a location
 	public int queryRooms(int id, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmHotel.queryRooms(id, location);
 	}
 
 	
 	// Returns room price at this location
 	public int queryRoomsPrice(int id, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmHotel.queryRoomsPrice(id, location);
 	}
 
 
 	// Returns the number of cars available at a location
 	public int queryCars(int id, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmCar.queryCars(id, location);
 	}
 
 
 	// Returns price of cars at this location
 	public int queryCarsPrice(int id, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmCar.queryCarsPrice(id, location);
 	}
 
@@ -334,19 +486,22 @@ public class ResourceManagerImpl
 
 	 //return a bill
 	public String queryCustomerInfo(int id, int customerID)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
-//		Trace.info("RM::queryCustomerInfo(" + id + ", " + customerID + ") called" );
-//		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-//		if( cust == null ) {
-//			Trace.warn("RM::queryCustomerInfo(" + id + ", " + customerID + ") failed--customer doesn't exist" );
-//			return "";   // NOTE: don't change this--WC counts on this value indicating a customer does not exist...
-//		} else {
-//				String s = cust.printBill();
-//				Trace.info("RM::queryCustomerInfo(" + id + ", " + customerID + "), bill follows..." );
-//				System.out.println( s );
-//				return s;
-//		} // if
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		String s="BIll for Customer ID"+ customerID+":\n";
 		
 		s=s+rmCar.queryCustomerInfo(id, customerID);
@@ -362,8 +517,22 @@ public class ResourceManagerImpl
   // new customer just returns a unique customer identifier
 	
   public int newCustomer(int id)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 	  	int cid;
 	  	boolean result;
 		 cid = Integer.parseInt( String.valueOf(id) +
@@ -380,8 +549,22 @@ public class ResourceManagerImpl
 
 	// I opted to pass in customerID instead. This makes testing easier
   public boolean newCustomer(int id, int customerID )
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 	  	boolean result;
 	  	result = rmCar.newCustomer(id, customerID);
 	  	result = rmFlight.newCustomer(id, customerID);
@@ -392,8 +575,22 @@ public class ResourceManagerImpl
 
 	// Deletes customer from the database. 
 	public boolean deleteCustomer(int id, int customerID)
-			throws RemoteException
+			throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		boolean result;
 	  	result = rmCar.deleteCustomer(id, customerID);
 	  	result = rmFlight.deleteCustomer(id, customerID);
@@ -404,29 +601,85 @@ public class ResourceManagerImpl
 
 	// Adds car reservation to this customer. 
 	public boolean reserveCar(int id, int customerID, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmCar.reserveCar(id, customerID, location);
 	}
 
 
 	// Adds room reservation to this customer. 
 	public boolean reserveRoom(int id, int customerID, String location)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmHotel.reserveRoom(id, customerID, location);
 	}
 	// Adds flight reservation to this customer.  
 	public boolean reserveFlight(int id, int customerID, int flightNum)
-		throws RemoteException
+		throws RemoteException, TransactionAbortedException, InvalidTransactionException
 	{
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
 		return rmFlight.reserveFlight(id, customerID, flightNum);
 	}
 	
 	/* reserve an itinerary */
     public boolean itinerary(int id,int customer,Vector flightNumbers,String location,boolean Car,boolean Room)
-	throws RemoteException {
+	throws RemoteException, TransactionAbortedException, InvalidTransactionException {
     	boolean result = true;
+		try{
+		if(lm.Lock (id, "flight", LockManager.WRITE)){
+			System.out.println("Lock granted");
+			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+		}
+		else{
+			return false;
+		}
+		}catch(DeadlockException e){
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
+		}
+		///////////////////
     	if(Car)
     		{
     		result = rmCar.itinerary(id, customer, flightNumbers, location, Car, Room);
