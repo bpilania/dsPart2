@@ -31,14 +31,14 @@ public class FlightRM
 	 try 
 	     {
 		 // create a new Server object
-		 FlightRM obj = new FlightRM();
+		 /* FlightRM obj = new FlightRM();
 		 // dynamically generate the stub (client proxy)
 		 ResourceManager rm = (ResourceManager) UnicastRemoteObject.exportObject(obj, 0);
 		 
 		 // Bind the remote object's stub in the registry
 		 Registry registry = LocateRegistry.getRegistry(8778);
 		 registry.rebind("Group4FlightRM", rm);
-		 
+		 */
 		 System.err.println("Flight Server ready");
 	     } 
 	 catch (Exception e) 
@@ -96,12 +96,19 @@ public class FlightRM
 	
 	
 	private void writeDataToLog(int xId, String key, RMItem value){
+		System.out.println("entering writedatatolog");
 		synchronized(logArray){
 			Log temp;
 			int indx;
 			if((indx=logContains(xId))!=-1){
 				temp=(Log)logArray.elementAt(indx);
 				temp.put(key,value);
+			}
+			else{
+				temp=new Log(xId,new RMHashtable());
+				temp.put(key,value);
+				logArray.add(temp);
+				
 			}	
 		}
 	}
@@ -222,12 +229,13 @@ public class FlightRM
 			// doesn't exist...add it
 			Flight newObj = new Flight( flightNum, flightSeats, flightPrice );
 			
-			writeData( id, newObj.getKey(), newObj );
+			writeData( id, newObj.getKey(), newObj);
 			String key=newObj.getKey();
 			if(readDataFromLog(id,key,id)==null){
-				newObj.setCount(-1);
-				newObj.type=0;
-				writeDataToLog(id,key,newObj);
+				Flight logObj =newObj.clone();
+				logObj.setCount(-1);
+				logObj.type=0;
+				writeDataToLog(id,key,logObj);
 			}
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
@@ -430,7 +438,10 @@ public class FlightRM
 								String.valueOf( Math.round( Math.random() * 100 + 1 )));
 		Customer cust = new Customer( cid );
 		writeData( id, cust.getKey(), cust );
-		writeDataToLog(id,cust.getKey(),cust);
+		Customer temp=cust.clone();
+		temp.setID(-1);
+		temp.setType(1);
+		writeDataToLog(id,cust.getKey(),temp);
 		Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid );
 		return cid;
 	}
@@ -557,27 +568,45 @@ public class FlightRM
     }
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
-    	Log temp=(Log)logArray.elementAt(logContains(transactionId));
-    	Vector val= temp.getValues();
- 	for(int i=0;i<val.size();i++){
- 		RMItem obj=(RMItem)val.elementAt(i);
+    	int indx=logContains(transactionId);
+    	
+    	Log temp;
+    	
+    	if(indx>-1){
+    		
+    		temp=(Log)logArray.elementAt(indx);
+    		
+    	}
+    	else{
+    		System.out.println("nothing in array");
+    		return;
+    	}
+    	
+ 	for(Enumeration e = temp.getKeys(); e.hasMoreElements();){
+ 		System.out.println("For loop");
+ 		String key = (String) (e.nextElement());
+ 		RMItem obj=temp.get(key);
  		if(obj.getType()==0){
  			Flight flight=(Flight) obj;
  			if(flight.getCount()==-1){
- 				removeData(transactionId,flight.getKey());
+ 				System.out.println("entering count=-1 block");
+ 				removeData(transactionId,key);
  			}
  			else{
- 				writeData(transactionId,flight.getKey(),flight);
+ 				System.out.println("entering other block");
+ 				writeData(transactionId,key,flight);
  			
  			}
  		}
  		else if(obj.getType()==1){
  			Customer cust=(Customer)obj;
  			if(cust.getID()==-1){
- 				removeData(transactionId,cust.getKey());
+ 				System.out.println("entering remove data for customer");
+ 				removeData(transactionId,key);
  			}
  			else{
- 				writeData(transactionId,cust.getKey(),obj);
+ 				System.out.println("entering write data for customer");
+ 				writeData(transactionId,key,obj);
  			}
  		}
  	}   	
