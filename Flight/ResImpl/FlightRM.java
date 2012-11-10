@@ -138,14 +138,16 @@ public class FlightRM
 	{
 		Trace.info("RM::deleteItem(" + id + ", " + key + ") called" );
 		ReservableItem curObj = (ReservableItem) readData( id, key );
+		Flight tempItem =new Flight(Integer.parseInt(curObj.getLocation()),curObj.getCount(),curObj.getPrice());
+		tempItem.setReserved(curObj.getReserved());
 		// Check if there is such an item in the storage
 		if( curObj == null ) {
 			Trace.warn("RM::deleteItem(" + id + ", " + key + ") failed--item doesn't exist" );
 			return false;
 		} else {
 			if(curObj.getReserved()==0){
-				curObj.setType(0);
-				writeDataToLog(id,curObj.getKey(),curObj);
+				tempItem.setType(0);
+				writeDataToLog(id,curObj.getKey(),tempItem);
 				removeData(id, curObj.getKey());
 				Trace.info("RM::deleteItem(" + id + ", " + key + ") item deleted" );
 				return true;
