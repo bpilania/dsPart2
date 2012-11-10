@@ -136,6 +136,7 @@ public class FlightRM
 			return false;
 		} else {
 			if(curObj.getReserved()==0){
+				curObj.setType(0);
 				writeDataToLog(id,curObj.getKey(),curObj);
 				removeData(id, curObj.getKey());
 				Trace.info("RM::deleteItem(" + id + ", " + key + ") item deleted" );
@@ -192,10 +193,14 @@ public class FlightRM
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " + location+") failed--No more items" );
 			return false;
 		}else{			
-			//writeDataToLog();
+			
+			cust.setType(1);
+			writeDataToLog(id,cust.getKey(),cust);
 			cust.reserve( key, location, item.getPrice());
 					
 			writeData( id, cust.getKey(), cust );
+			item.setType(0);
+			writeDataToLog(id,item.getKey(),item);
 			
 			// decrease the number of available items in the storage
 			item.setCount(item.getCount() - 1);
@@ -469,11 +474,15 @@ public class FlightRM
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + " " +  reserveditem.getCount() +  " times"  );
 				ReservableItem item  = (ReservableItem) readData(id, reserveditem.getKey());
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + "which is reserved" +  item.getReserved() +  " times and is still available " + item.getCount() + " times"  );
+				item.setType(0);
+				writeDataToLog(id,item.getKey(),item);
 				item.setReserved(item.getReserved()-reserveditem.getCount());
 				item.setCount(item.getCount()+reserveditem.getCount());
 			}
 			
 			// remove the customer from the storage
+			cust.setType(1);
+			writeDataToLog(id,cust.getKey(),cust);
 			removeData(id, cust.getKey());
 			
 			Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") succeeded" );
