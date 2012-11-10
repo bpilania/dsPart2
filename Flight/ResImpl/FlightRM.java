@@ -192,7 +192,9 @@ public class FlightRM
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " + location+") failed--No more items" );
 			return false;
 		}else{			
-			cust.reserve( key, location, item.getPrice());		
+			//writeDataToLog();
+			cust.reserve( key, location, item.getPrice());
+					
 			writeData( id, cust.getKey(), cust );
 			
 			// decrease the number of available items in the storage
@@ -217,14 +219,18 @@ public class FlightRM
 			
 			writeData( id, newObj.getKey(), newObj );
 			String key=newObj.getKey();
-			newObj.setCount(-1);
-			writeDataToLog(id,key,newObj);
+			if(readDataFromLog(id,key,id)==null){
+				newObj.setCount(-1);
+				newObj.type=0;
+				writeDataToLog(id,key,newObj);
+			}
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
 		} else {
 			// add seats to existing flight and update the price...
-			writeDataToLog(id,curObj.getKey(),curObj);
-			curObj.setCount( curObj.getCount() + flightSeats );
+			if(readDataFromLog(id,curObj.getKey(),id)==null)
+				writeDataToLog(id,curObj.getKey(),curObj);
+			
 			
 			if( flightPrice > 0 ) {
 				curObj.setPrice( flightPrice );
@@ -433,6 +439,8 @@ public class FlightRM
 		if( cust == null ) {
 			cust = new Customer(customerID);
 			writeData( id, cust.getKey(), cust );
+			cust.setType(1);
+			cust.setID(-1);
 			writeDataToLog(id,cust.getKey(),cust);
 			Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") created a new customer" );
 			return true;
@@ -543,13 +551,25 @@ public class FlightRM
     	Log temp=(Log)logArray.elementAt(logContains(transactionId));
     	Vector val= temp.getValues();
  	for(int i=0;i<val.size();i++){
- 		Flight flightObj=(Flight)val.elementAt(i);
- 		if(flightObj.getCount()==-1){
- 			removeData(transactionId,flightObj.getKey());
- 		}
- 		else{
- 			writeData(transactionId,flightObj.getKey(),flightObj);
+ 		RMItem obj=(RMItem)val.elementAt(i);
+ 		if(obj.getType()==0){
+ 			Flight flight=(Flight) obj;
+ 			if(flight.getCount()==-1){
+ 				removeData(transactionId,flight.getKey());
+ 			}
+ 			else{
+ 				writeData(transactionId,flight.getKey(),flight);
  			
+ 			}
+ 		}
+ 		else if(obj.getType()==1){
+ 			Customer cust=(Customer)obj;
+ 			if(cust.getID()==-1){
+ 				removeData(transactionId,cust.getKey());
+ 			}
+ 			else{
+ 				writeData(transactionId,cust.getKey(),obj);
+ 			}
  		}
  	}   	
     	
