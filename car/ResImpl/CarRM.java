@@ -436,6 +436,7 @@ public class CarRM
 	{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
+		Customer temp=cust.clone();
 		if( cust == null ) {
 			Trace.warn("RM::deleteCustomer(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return false;
@@ -448,13 +449,19 @@ public class CarRM
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + " " +  reserveditem.getCount() +  " times"  );
 				ReservableItem item  = (ReservableItem) readData(id, reserveditem.getKey());
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + "which is reserved" +  item.getReserved() +  " times and is still available " + item.getCount() + " times"  );
+				Car tempItem =new Car(item.getLocation(),item.getCount(),item.getPrice());
+				tempItem.setReserved(item.getReserved());
+				tempItem.setType(0);
 				item.setReserved(item.getReserved()-reserveditem.getCount());
 				item.setCount(item.getCount()+reserveditem.getCount());
+				if(readDataFromLog(id,item.getKey(),id)==null)
+					writeDataToLog(id,item.getKey(),tempItem);
 			}
 			
 			// remove the customer from the storage
 			removeData(id, cust.getKey());
-			
+			if(readDataFromLog(id,cust.getKey(),id)==null)
+				writeDataToLog(id,cust.getKey(),temp);
 			Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") succeeded" );
 			return true;
 		} // if
@@ -463,22 +470,7 @@ public class CarRM
 
 
 
-	// Frees flight reservation record. Flight reservation records help us make sure we
-	//  don't delete a flight if one or more customers are holding reservations
-//	public boolean freeFlightReservation(int id, int flightNum)
-//		throws RemoteException
-//	{
-//		Trace.info("RM::freeFlightReservations(" + id + ", " + flightNum + ") called" );
-//		RMInteger numReservations = (RMInteger) readData( id, Flight.getNumReservationsKey(flightNum) );
-//		if( numReservations != null ) {
-//			numReservations = new RMInteger( Math.max( 0, numReservations.getValue()-1) );
-//		} // if
-//		writeData(id, Flight.getNumReservationsKey(flightNum), numReservations );
-//		Trace.info("RM::freeFlightReservations(" + id + ", " + flightNum + ") succeeded, this flight now has "
-//				+ numReservations + " reservations" );
-//		return true;
-//	}
-//	
+
 
 	
 	// Adds car reservation to this customer. 
@@ -509,19 +501,61 @@ public class CarRM
     	return reserveCar(id, customer, location);
     }
  public int start() throws RemoteException{
-	return 1;
-    }
+    		return 1;
+	}
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException{
-	return true;
+    	removeDataFromLog(transactionId);
+    	return true;	
     }
     
-    public void abort(int transactionId) throws RemoteException,InvalidTransactionException{   
-	 
+    public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
+    	int indx=logContains(transactionId);
+    	
+    	Log temp;
+    	
+    	if(indx>-1){
+    		
+    		temp=(Log)logArray.elementAt(indx);
+    		
+    	}
+    	else{
+    		System.out.println("nothing in array");
+    		return;
+    	}
+    	
+ 	for(Enumeration e = temp.getKeys(); e.hasMoreElements();){
+ 		System.out.println("For loop");
+ 		String key = (String) (e.nextElement());
+ 		RMItem obj=temp.get(key);
+ 		if(obj.getType()==0){
+ 			Flight flight=(Flight) obj;
+ 			if(flight.getCount()==-1){
+ 				System.out.println("entering count=-1 block");
+ 				removeData(transactionId,key);
+ 			}
+ 			else{
+ 				System.out.println("entering other block");
+ 				writeData(transactionId,key,flight);
+ 			
+ 			}
+ 		}
+ 		else if(obj.getType()==1){
+ 			Customer cust=(Customer)obj;
+ 			if(cust.getID()==-1){
+ 				System.out.println("entering remove data for customer");
+ 				removeData(transactionId,key);
+ 			}
+ 			else{
+ 				System.out.println("entering write data for customer");
+ 				writeData(transactionId,key,obj);
+ 			}
+ 		}
+ 	}   	
+    	
     }    
-public boolean shutdown() throws RemoteException{
-	return true; 
-}
-
+ public boolean shutdown() throws RemoteException{
+ 	return true;
+ }
 
 }
