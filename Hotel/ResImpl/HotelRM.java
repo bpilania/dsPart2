@@ -200,15 +200,16 @@ public class HotelRM
 		
 		// check if the item is available
 		ReservableItem item = (ReservableItem)readData(id, key);
-		Hotel tempItem =new Hotel(item.getLocation(),item.getCount(),item.getPrice());
-		tempItem.setReserved(item.getReserved());
+		
 		if(item==null){
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " +location+") failed--item doesn't exist" );
 			return false;
 		}else if(item.getCount()==0){
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " + location+") failed--No more items" );
 			return false;
-		}else{			
+		}else{		
+			Hotel tempItem =new Hotel(item.getLocation(),item.getCount(),item.getPrice());
+			tempItem.setReserved(item.getReserved());	
 			Customer temp=cust.clone();
 			temp.setType(1);
 			if(readDataFromLog(id,cust.getKey(),id)==null){
@@ -446,11 +447,12 @@ public class HotelRM
 	{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-		Customer temp=cust.clone();
+		
 		if( cust == null ) {
 			Trace.warn("RM::deleteCustomer(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return false;
-		} else {			
+		} else {	
+			Customer temp=cust.clone();		
 			// Increase the reserved numbers of all reservable items which the customer reserved. 
 			RMHashtable reservationHT = cust.getReservations();
 			for(Enumeration e = reservationHT.keys(); e.hasMoreElements();){		

@@ -201,8 +201,7 @@ public class CarRM
 		
 		// check if the item is available
 		ReservableItem item = (ReservableItem)readData(id, key);
-		Car tempItem =new Car(item.getLocation(),item.getCount(),item.getPrice());
-		tempItem.setReserved(item.getReserved());
+		
 		if(item==null){
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " +location+") failed--item doesn't exist" );
 			return false;
@@ -210,6 +209,8 @@ public class CarRM
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " + location+") failed--No more items" );
 			return false;
 		}else{		
+			Car tempItem =new Car(item.getLocation(),item.getCount(),item.getPrice());
+			tempItem.setReserved(item.getReserved());
 			Customer temp=cust.clone();
 			temp.setType(1);
 			if(readDataFromLog(id,cust.getKey(),id)==null){
@@ -444,12 +445,13 @@ public class CarRM
 	{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-		Customer temp=cust.clone();
+		
 		if( cust == null ) {
 			Trace.warn("RM::deleteCustomer(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return false;
 		} else {			
 			// Increase the reserved numbers of all reservable items which the customer reserved. 
+			Customer temp=cust.clone();
 			RMHashtable reservationHT = cust.getReservations();
 			for(Enumeration e = reservationHT.keys(); e.hasMoreElements();){		
 				String reservedkey = (String) (e.nextElement());

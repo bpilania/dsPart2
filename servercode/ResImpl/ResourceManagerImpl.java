@@ -551,17 +551,14 @@ public class ResourceManagerImpl
 						return cid;
 					}
 					else{
-					abort(id);
 					return 0;
 					}
 				}
 				else{
-				abort(id);
 				return 0;
 				}
 			}
 			else{
-			abort(id);
 			return 0;
 			}
 			
@@ -602,17 +599,14 @@ public class ResourceManagerImpl
 						return true;
 					}
 					else{
-					abort(id);
 					return false;
 					}
 				}
 				else{
-				abort(id);
 				return false;
 				}
 			}
 			else{
-			abort(id);
 			return false;
 			}
 			
@@ -651,17 +645,14 @@ public class ResourceManagerImpl
 						return true;
 					}
 					else{
-					abort(id);
 					return false;
 					}
 				}
 				else{
-				abort(id);
 				return false;
 				}
 			}
 			else{
-			abort(id);
 			return false;
 			}
 			
