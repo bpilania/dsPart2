@@ -235,7 +235,10 @@ public class client
 		    try{
 			Id = obj.getInt(arguments.elementAt(1));
 			int customer=rm.newCustomer(xID);
-			System.out.println("new customer id:"+customer);
+			if(customer != 0)
+				System.out.println("new customer id:"+customer);
+			else
+				System.out.println("Customer already present!");
 		    }catch(InvalidTransactionException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
@@ -382,7 +385,7 @@ public class client
 			if(rm.deleteCustomer(xID,customer))
 			    System.out.println("Customer Deleted");
 			else
-			    System.out.println("Customer could not be deleted");
+			    System.out.println("Invalid customer ID!");
 		    }catch(InvalidTransactionException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
@@ -848,7 +851,12 @@ public class client
 			Id = obj.getInt(arguments.elementAt(1));
 			Cid = obj.getInt(arguments.elementAt(2));
 			boolean customer=rm.newCustomer(xID,Cid);
-			System.out.println("new customer id:"+Cid);
+			if(customer == true)
+				System.out.println("new customer id:"+Cid);
+			else
+			{
+				System.out.println("Customer already present!");
+			}
 		    }catch(InvalidTransactionException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
