@@ -278,7 +278,15 @@ public class CarRM
 		if( curObj == null ) {
 			// car location doesn't exist...add it
 			Car newObj = new Car( location, count, price );
+			String key=newObj.getKey();
 			writeData( id, newObj.getKey(), newObj );
+			if(readDataFromLog(id,key,id)==null){
+				Car logObj =(Car)newObj.clone();
+				logObj.setCount(-1);
+				logObj.type=0;
+				writeDataToLog(id,key,logObj);
+			}
+			
 			Trace.info("RM::addCars(" + id + ") created new location " + location + ", count=" + count + ", price=$" + price );
 		} else {
 			// add count to existing car location and update price...
@@ -529,14 +537,14 @@ public class CarRM
  		String key = (String) (e.nextElement());
  		RMItem obj=temp.get(key);
  		if(obj.getType()==0){
- 			Flight flight=(Flight) obj;
- 			if(flight.getCount()==-1){
+ 			Car car=(Car) obj;
+ 			if(car.getCount()==-1){
  				System.out.println("entering count=-1 block");
  				removeData(transactionId,key);
  			}
  			else{
  				System.out.println("entering other block");
- 				writeData(transactionId,key,flight);
+ 				writeData(transactionId,key,car);
  			
  			}
  		}
