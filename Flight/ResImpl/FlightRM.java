@@ -146,6 +146,7 @@ public class FlightRM
 			return false;
 		} else {
 			if(curObj.getReserved()==0){
+			
 				tempItem.setType(0);
 				writeDataToLog(id,curObj.getKey(),tempItem);
 				removeData(id, curObj.getKey());
@@ -221,7 +222,6 @@ public class FlightRM
 			item.setReserved(item.getReserved()+1);
 			
 			if(readDataFromLog(id,item.getKey(),id)==null){
-				
 				tempItem.setType(0);
 				writeDataToLog(id,item.getKey(),tempItem);
 				
