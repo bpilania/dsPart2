@@ -128,13 +128,11 @@ public class client
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
 		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
 		    	xID=0;
@@ -166,8 +164,18 @@ public class client
 			    System.out.println("Cars added");
 			else
 			    System.out.println("Cars could not be added");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -196,8 +204,18 @@ public class client
 			    System.out.println("Rooms added");
 			else
 			    System.out.println("Rooms could not be added");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -218,8 +236,18 @@ public class client
 			Id = obj.getInt(arguments.elementAt(1));
 			int customer=rm.newCustomer(xID);
 			System.out.println("new customer id:"+customer);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -244,13 +272,25 @@ public class client
 			    System.out.println("Flight Deleted");
 			else
 			    System.out.println("Flight could not be deleted");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		    }
 		    break;
+		    
+  
 		    
 		case 7: //delete Car
 		    if(arguments.size()!=3){
@@ -271,8 +311,18 @@ public class client
 			    System.out.println("Cars Deleted");
 			else
 			    System.out.println("Cars could not be deleted");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -297,8 +347,18 @@ public class client
 			    System.out.println("Rooms Deleted");
 			else
 			    System.out.println("Rooms could not be deleted");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -323,8 +383,18 @@ public class client
 			    System.out.println("Customer Deleted");
 			else
 			    System.out.println("Customer could not be deleted");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -337,23 +407,33 @@ public class client
 			break;
 		    }
 		    
-			    if(xID == 0){
-		    		System.out.println("No transaction running. Please start a transaction using START command."); 
-		    		break;
-			    }
-			    System.out.println("Querying a flight using id: "+arguments.elementAt(1));
-			    System.out.println("Flight number: "+arguments.elementAt(2));
-			    try{
-				Id = obj.getInt(arguments.elementAt(1));
-				flightNum = obj.getInt(arguments.elementAt(2));
-				int seats=rm.queryFlight(xID,flightNum);
-				System.out.println("Number of seats available:"+seats);
-			    }
-			    catch(Exception e){
-				System.out.println("EXCEPTION:");
-				System.out.println(e.getMessage());
-				e.printStackTrace();
-			    }
+		    if(xID == 0){
+	    		System.out.println("No transaction running. Please start a transaction using START command."); 
+	    		break;
+		    }
+		    System.out.println("Querying a flight using id: "+arguments.elementAt(1));
+		    System.out.println("Flight number: "+arguments.elementAt(2));
+		    try{
+			Id = obj.getInt(arguments.elementAt(1));
+			flightNum = obj.getInt(arguments.elementAt(2));
+			int seats=rm.queryFlight(xID,flightNum);
+			System.out.println("Number of seats available:"+seats);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(Exception e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		    }
 		    break;
 		    
 		case 11: //querying a Car Location
@@ -372,8 +452,18 @@ public class client
 			location = obj.getString(arguments.elementAt(2));
 			numCars=rm.queryCars(xID,location);
 			System.out.println("number of Cars at this location:"+numCars);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -396,8 +486,18 @@ public class client
 			location = obj.getString(arguments.elementAt(2));
 			numRooms=rm.queryRooms(xID,location);
 			System.out.println("number of Rooms at this location:"+numRooms);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -420,8 +520,18 @@ public class client
 			int customer = obj.getInt(arguments.elementAt(2));
 			String bill=rm.queryCustomerInfo(xID,customer);
 			System.out.println("Customer info:"+bill);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -444,8 +554,18 @@ public class client
 			flightNum = obj.getInt(arguments.elementAt(2));
 			price=rm.queryFlightPrice(xID,flightNum);
 			System.out.println("Price of a seat:"+price);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -468,8 +588,18 @@ public class client
 			location = obj.getString(arguments.elementAt(2));
 			price=rm.queryCarsPrice(xID,location);
 			System.out.println("Price of a car at this location:"+price);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -492,8 +622,18 @@ public class client
 			location = obj.getString(arguments.elementAt(2));
 			price=rm.queryRoomsPrice(xID,location);
 			System.out.println("Price of Rooms at this location:"+price);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -512,20 +652,30 @@ public class client
 		    System.out.println("Reserving a seat on a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    System.out.println("Flight number: "+arguments.elementAt(3));
-			    try{
-				Id = obj.getInt(arguments.elementAt(1));
-				int customer = obj.getInt(arguments.elementAt(2));
-				flightNum = obj.getInt(arguments.elementAt(3));
-				if(rm.reserveFlight(xID,customer,flightNum))
-				    System.out.println("Flight Reserved");
-				else
-				    System.out.println("Flight could not be reserved.");
-			    }
-			    catch(Exception e){
-				System.out.println("EXCEPTION:");
-				System.out.println(e.getMessage());
-				e.printStackTrace();
-			    }
+		    try{
+			Id = obj.getInt(arguments.elementAt(1));
+			int customer = obj.getInt(arguments.elementAt(2));
+			flightNum = obj.getInt(arguments.elementAt(3));
+			if(rm.reserveFlight(xID,customer,flightNum))
+			    System.out.println("Flight Reserved");
+			else
+			    System.out.println("Flight could not be reserved.");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(Exception e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		    }
 		    break;
 		    
 		case 18:  //reserve a car
@@ -550,8 +700,18 @@ public class client
 			    System.out.println("Car Reserved");
 			else
 			    System.out.println("Car could not be reserved.");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -579,8 +739,18 @@ public class client
 			    System.out.println("Room Reserved");
 			else
 			    System.out.println("Room could not be reserved.");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -617,8 +787,18 @@ public class client
 			    System.out.println("Itinerary Reserved");
 			else
 			    System.out.println("Itinerary could not be reserved.");
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -630,6 +810,26 @@ public class client
 			obj.wrongNumber();
 			break;
 		    }
+		    try{
+		    	rm.abort(xID);
+		    	xID=0;
+		    }catch(InvalidTransactionException e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }catch(RemoteException e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println("Remote exception occoured! Transaction failed!");
+			System.out.println(e.getMessage());
+		    }
+		    catch(Exception e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		    }
+
 		    System.out.println("Quitting client.");
 		    System.exit(1);
 		    
@@ -649,8 +849,18 @@ public class client
 			Cid = obj.getInt(arguments.elementAt(2));
 			boolean customer=rm.newCustomer(xID,Cid);
 			System.out.println("new customer id:"+Cid);
+		    }catch(InvalidTransactionException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }
+		    catch(TransactionAbortedException e){
+		    	xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
 		    }
 		    catch(Exception e){
+		    	xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -665,14 +875,18 @@ public class client
 			    try{
 			    	if(xID == 0){
 			    		xID = rm.start();
+			    		System.out.println("Transaction with transaction ID "+xID+" has been started.");
 			    	}
 			    	else{
 			    		System.out.println("Transaction with transaction ID "+xID+" is already running. Cannot start a new transaction.");
 			    	}
 			    }catch(RemoteException e){
+			    	xID=0;
+			    	e.printStackTrace();
 			    	System.out.println("Remote exception occoured! Transaction failed!");
 			    }
 			    catch(Exception e){
+			    	xID=0;
 				System.out.println("EXCEPTION:");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
@@ -689,34 +903,65 @@ public class client
 	    		break;
 		    }
 		    try{
-		    	if(rm.commit(xID))
+		    	if(rm.commit(xID)){
 		    		System.out.println("Transaction "+xID+" committed successfully!");
+		    		xID=0;
+		    	}
 		    	else
 		    		System.out.println("Transaction "+xID+" could not be committed!");
 		    	
 		    }catch(InvalidTransactionException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }
 		    catch(TransactionAbortedException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		    }catch(RemoteException e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println("Remote exception occoured! Transaction failed!");
-			e.printStackTrace();
 		    }
 		    catch(Exception e){
+			xID=0;
 			System.out.println("EXCEPTION:");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		    }
 			break;
 		    
-
-		    
+		case 25:  //abort the transaction
+		    if(arguments.size()!=1){
+			obj.wrongNumber();
+			break;
+		    }
+		    if(xID == 0){
+	    		System.out.println("No transaction running. Please start a transaction using START command."); 
+	    		break;
+		    }
+		    try{
+		    	rm.abort(xID);
+		    	xID=0;
+		    }catch(InvalidTransactionException e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+		    }catch(RemoteException e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println("Remote exception occoured! Transaction failed!");
+			System.out.println(e.getMessage());
+		    }
+		    catch(Exception e){
+			xID=0;
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		    }
+			break;
+			
 		default:
 		    System.out.println("The interface does not support this command.");
 		    break;
@@ -787,6 +1032,8 @@ public class client
 	    return 23;
 	else if (argument.compareToIgnoreCase("commit")==0)
 	    return 24;
+	else if (argument.compareToIgnoreCase("abort")==0)
+	    return 25;
 	else
 	    return 666;
 
@@ -1003,7 +1250,14 @@ public class client
 			System.out.println("\nUsage:");
 			System.out.println("\ncommit");
 			break;
-
+	   
+	    case 25:  //aborting a transaction
+			System.out.println("aborting a transaction with server");
+			System.out.println("Purpose:");
+			System.out.println("\tTo abort the transaction");
+			System.out.println("\nUsage:");
+			System.out.println("\nabort");
+			break;
 	    default:
 		System.out.println(command);
 		System.out.println("The interface does not support this command.");
