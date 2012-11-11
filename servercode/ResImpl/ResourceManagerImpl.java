@@ -25,7 +25,7 @@ public class ResourceManagerImpl
     static ResourceManager rmFlight = null;
     static int xID = 0;
     static LockManager lm=null;
-
+    static Hashtable rmTracker=new Hashtable(); 
     
 
 	public static void main(String args[]) {
@@ -167,8 +167,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Flight X");
 			return rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
 		}
 		else{
@@ -195,8 +199,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{	
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Flight X");
 			return rmFlight.deleteFlight(id, flightNum);
 		}
 		else{
@@ -223,8 +231,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Hotel X");
 			return rmHotel.addRooms(id, location, count, price);
 		}
 		else{
@@ -250,8 +262,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+			throw new InvalidTransactionException(id,"Transaction Id is not valid");
+		}
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Hotel X");
 			return rmHotel.deleteRooms(id, location);
 		}
 		else{
@@ -277,8 +293,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+			throw new InvalidTransactionException(id,"Transaction Id is not valid");
+		}
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Car X");
 			return rmCar.addCars(id, location, count, price);
 		}
 		else{
@@ -304,8 +324,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+			throw new InvalidTransactionException(id,"Transaction Id is not valid");
+		}
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Car X");
 			return rmCar.deleteCars(id, location);
 		}
 		else{
@@ -332,8 +356,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+			if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 			if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.READ)){
 				System.out.println("Lock granted");
+				enlist(id,"Flight S");
 				return rmFlight.queryFlight(id, flightNum);
 			}
 			else{
@@ -359,8 +387,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+			if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
+			enlist(id,"Flight S");
 			return rmFlight.queryFlightPrice(id, flightNum);
 		}
 		else{
@@ -386,8 +418,13 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
+			enlist(id,"Hotel S");
 			return rmHotel.queryRooms(id, location);
 		}
 		else{
@@ -413,8 +450,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
+			enlist(id,"Hotel S");
 			return rmHotel.queryRoomsPrice(id, location);
 		}
 		else{
@@ -440,8 +481,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
+			enlist(id,"Car X");
 			return rmCar.queryCars(id, location);
 		}
 		else{
@@ -467,8 +512,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
+			enlist(id,"Car S");
 			return rmCar.queryCarsPrice(id, location);
 		}
 		else{
@@ -503,7 +552,13 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.READ)){
+			enlist(id,"Flight S");
+			enlist(id,"Car S");
+			enlist(id,"Hotel S");
 			String s="BIll for Customer ID"+ customerID+":\n";
 		
 			s=s+rmCar.queryCustomerInfo(id, customerID);
@@ -543,7 +598,13 @@ public class ResourceManagerImpl
 				String.valueOf(Calendar.getInstance().get(Calendar.MILLISECOND)) +
 				String.valueOf( Math.round( Math.random() * 100 + 1 )));
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("customer"+cid).trim().toString(), LockManager.WRITE)){
+			enlist(id,"Flight X");
+			enlist(id,"Car X");
+			enlist(id,"Hotel X");
 		  	if(rmCar.newCustomer(id,cid)){
 		  		if(rmFlight.newCustomer(id,cid)){
 		  			if(rmHotel.newCustomer(id,cid)){
@@ -588,7 +649,13 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
+			enlist(id,"Flight X");
+			enlist(id,"Hotel X");
+			enlist(id,"Cars X");
 			System.out.println("Lock granted");
 		  	boolean result;
 		  	
@@ -635,8 +702,14 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Flight X");
+			enlist(id,"Car X");
+			enlist(id,"Hotel X");
 			boolean result;
 		  	if(rmCar.deleteCustomer(id,customerID)){
 		  		if(rmFlight.deleteCustomer(id,customerID)){
@@ -681,8 +754,13 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Car X");
+			enlist(id,"Car X");
 			return rmCar.reserveCar(id, customerID, location);
 		}
 		else{
@@ -708,8 +786,12 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
+			enlist(id,"Room X");
 			return rmHotel.reserveRoom(id, customerID, location);
 		}
 		else{
@@ -734,7 +816,11 @@ public class ResourceManagerImpl
 		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
 	{
 		try{
+		if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
+			enlist(id,"Flight X");
 			System.out.println("Lock granted");
 			return rmFlight.reserveFlight(id, customerID, flightNum);
 		}
@@ -762,15 +848,27 @@ public class ResourceManagerImpl
     	boolean result = true;
 		try{
 			if(Car){
+				if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+				}
 				lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE);
+				enlist(id,"Car X");
 			}
 			if(Room){
+				if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+				}
 				lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE);
+				enlist(id,"Hotel X");
 			}
-			for(int i=0;i<flightNumbers.size();i++)
+			if(!isValid(id)){
+				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			}
+			for(int i=0;i<flightNumbers.size();i++){
 				lm.Lock (id, ("flight"+flightNumbers.elementAt(i)).trim().toString(), LockManager.WRITE);
-				
-		
+				enlist(id,"Flight X");
+			}
+			
 			System.out.println("Lock granted");
 			if(Car)
 		    		{
@@ -865,9 +963,39 @@ public class ResourceManagerImpl
 	}
 	
     }    
+    
+    
  public boolean shutdown() throws RemoteException{
-	return true;
+ 	
+ 	if(rmTracker.isEmpty()){
+ 		rmCar.shutdown();
+ 		rmFlight.shutdown();
+ 		rmHotel.shutdown();
+ 		return true;		
+ 	}
+ 	else {
+ 		return false;
+ 	}
+	
+ }
+ 
+ public  void addToTracker(int xid){
+ 	//creates hashtable entry for new transaction id
+ 	Vector rmValues=new Vector();
+ 	rmTracker.put(xid,rmValues);
+ }
+ 
+ public void enlist(int xid,String rmVal){
+ 	Vector vec = (Vector) rmTracker.get(xid);
+ 	vec.add(rmVal);
+ 	rmTracker.put(xid,rmVal);
  }
 
+public boolean isValid(int xid){
+	return rmTracker.containsKey(xid);
+}
+ public void removeFromTracker(int xid){
+ 	rmTracker.remove(xid);
+ }
 
 }

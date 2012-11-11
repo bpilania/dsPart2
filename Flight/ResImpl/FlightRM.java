@@ -15,7 +15,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 //public class FlightRM extends java.rmi.server.UnicastRemoteObject
 public class FlightRM
-	implements ResourceManager {
+	implements ResourceManager,Runnable {
 	
 	protected RMHashtable m_itemHT = new RMHashtable();
 	Vector logArray =new Vector();
@@ -576,8 +576,21 @@ public class FlightRM
  	}   	
     	
     }    
+ public void run(){
+    	try{
+    		Thread.sleep(1000);
+    		System.exit(0);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
  public boolean shutdown() throws RemoteException{
+ 	
+ 	FlightRM car1=new FlightRM();
+ 	 Thread t=new Thread(car1);
+ 	 t.start();
  	return true;
  }
+
 
 }

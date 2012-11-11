@@ -16,7 +16,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 //public class CarRM extends java.rmi.server.UnicastRemoteObject
 public class CarRM
-	implements ResourceManager {
+	implements ResourceManager,Runnable {
 	
 	protected RMHashtable m_itemHT = new RMHashtable();
     static ResourceManager rm = null;
@@ -564,7 +564,19 @@ public class CarRM
  	}   	
     	
     }    
+ public void run(){
+    	try{
+    		Thread.sleep(1000);
+    		System.exit(0);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
  public boolean shutdown() throws RemoteException{
+ 	
+ 	CarRM car1=new CarRM();
+ 	 Thread t=new Thread(car1);
+ 	 t.start();
  	return true;
  }
 
