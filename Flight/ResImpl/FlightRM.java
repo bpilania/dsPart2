@@ -31,14 +31,14 @@ public class FlightRM
 	 try 
 	     {
 		 // create a new Server object
-		 /* FlightRM obj = new FlightRM();
+		  FlightRM obj = new FlightRM();
 		 // dynamically generate the stub (client proxy)
 		 ResourceManager rm = (ResourceManager) UnicastRemoteObject.exportObject(obj, 0);
 		 
 		 // Bind the remote object's stub in the registry
 		 Registry registry = LocateRegistry.getRegistry(8778);
 		 registry.rebind("Group4FlightRM", rm);
-		 */
+		 
 		 System.err.println("Flight Server ready");
 	     } 
 	 catch (Exception e) 

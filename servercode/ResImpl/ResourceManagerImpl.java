@@ -60,11 +60,11 @@ public class ResourceManagerImpl
 	     }
 	 
 	 // Code as client
-	/*
+	
 	rmCar =  connection("Group4CarRM", server, port);
 	rmHotel = connection("Group4HotelRM", server, port);
 	rmFlight = connection("Group4FlightRM", server, port);
-	*/
+	
 	 //Code as client ends
 	 
 	 lm = new LockManager();
@@ -169,7 +169,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
+			return rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
 		}
 		else{
 			return false;
@@ -197,7 +197,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmFlight.deleteFlight(id, flightNum);
+			return rmFlight.deleteFlight(id, flightNum);
 		}
 		else{
 			return false;
@@ -225,7 +225,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmHotel.addRooms(id, location, count, price);
+			return rmHotel.addRooms(id, location, count, price);
 		}
 		else{
 			return false;
@@ -252,7 +252,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmHotel.deleteRooms(id, location);
+			return rmHotel.deleteRooms(id, location);
 		}
 		else{
 			return false;
@@ -279,7 +279,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//rmCar.addCars(id, location, count, price);
+			return rmCar.addCars(id, location, count, price);
 		}
 		else{
 			return false;
@@ -306,7 +306,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmCar.deleteCars(id, location);
+			return rmCar.deleteCars(id, location);
 		}
 		else{
 			return false;
@@ -334,10 +334,10 @@ public class ResourceManagerImpl
 		try{
 			if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.READ)){
 				System.out.println("Lock granted");
-				return 1111;//return rmFlight.queryFlight(id, flightNum);
+				return rmFlight.queryFlight(id, flightNum);
 			}
 			else{
-				return 1000;
+				return 0;
 			}
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -361,10 +361,10 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
-			return 1111;//return rmFlight.queryFlightPrice(id, flightNum);
+			return rmFlight.queryFlightPrice(id, flightNum);
 		}
 		else{
-			return 1000;
+			return 0;
 		}
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -388,10 +388,10 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
-			return 1111;//return rmHotel.queryRooms(id, location);
+			return rmHotel.queryRooms(id, location);
 		}
 		else{
-			return 1000;
+			return 0;
 		}
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -415,10 +415,10 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
-			return 1111;//return rmHotel.queryRoomsPrice(id, location);
+			return rmHotel.queryRoomsPrice(id, location);
 		}
 		else{
-			return 1000;
+			return 0;
 		}
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -442,10 +442,10 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
-			return 1111;//return rmCar.queryCars(id, location);
+			return rmCar.queryCars(id, location);
 		}
 		else{
-			return 1000;
+			return 0;
 		}
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -469,10 +469,10 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.READ)){
 			System.out.println("Lock granted");
-			return 1111;//return rmCar.queryCarsPrice(id, location);
+			return rmCar.queryCarsPrice(id, location);
 		}
 		else{
-			return 1000;
+			return 0;
 		}
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -506,11 +506,11 @@ public class ResourceManagerImpl
 		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.READ)){
 			String s="BIll for Customer ID"+ customerID+":\n";
 		
-			//s=s+rmCar.queryCustomerInfo(id, customerID);
+			s=s+rmCar.queryCustomerInfo(id, customerID);
 		
-			//s=s+ rmFlight.queryCustomerInfo(id, customerID);
+			s=s+ rmFlight.queryCustomerInfo(id, customerID);
 		
-			//s=s+rmHotel.queryCustomerInfo(id, customerID);
+			s=s+rmHotel.queryCustomerInfo(id, customerID);
 
 			return s;
 		}
@@ -544,7 +544,7 @@ public class ResourceManagerImpl
 				String.valueOf( Math.round( Math.random() * 100 + 1 )));
 		try{
 		if(lm.Lock (id, ("customer"+cid).trim().toString(), LockManager.WRITE)){
-		  	/*if(rmCar.newCustomer(id,cid)){
+		  	if(rmCar.newCustomer(id,cid)){
 		  		if(rmFlight.newCustomer(id,cid)){
 		  			if(rmHotel.newCustomer(id,cid)){
 		  				System.out.println("Lock granted");
@@ -552,22 +552,22 @@ public class ResourceManagerImpl
 					}
 					else{
 					abort(id);
-					return false;
+					return 0;
 					}
 				}
 				else{
 				abort(id);
-				return false;
+				return 0;
 				}
 			}
 			else{
 			abort(id);
-			return false;
+			return 0;
 			}
 			
-		  	*/
+		  	
 			//Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid ); //To be activated later
-			return 111111111;
+
 		}
 		else{
 			return 0;
@@ -595,7 +595,7 @@ public class ResourceManagerImpl
 			System.out.println("Lock granted");
 		  	boolean result;
 		  	
-		  	/*if(rmCar.newCustomer(id,customerID)){
+		  	if(rmCar.newCustomer(id,customerID)){
 		  		if(rmFlight.newCustomer(id,customerID)){
 		  			if(rmHotel.newCustomer(id,customerID)){
 		  				System.out.println("Lock granted");
@@ -616,8 +616,8 @@ public class ResourceManagerImpl
 			return false;
 			}
 			
-		  	*/
-			return true;//return result;
+		  	
+			
 		}
 		else{
 			return false;
@@ -644,7 +644,7 @@ public class ResourceManagerImpl
 		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
 			boolean result;
-		  	/*if(rmCar.deleteCustomer(id,customerID)){
+		  	if(rmCar.deleteCustomer(id,customerID)){
 		  		if(rmFlight.deleteCustomer(id,customerID)){
 		  			if(rmHotel.deleteCustomer(id,customerID)){
 		  				System.out.println("Lock granted");
@@ -665,8 +665,7 @@ public class ResourceManagerImpl
 			return false;
 			}
 			
-		  	*/
-			return true;//return result;
+
 		}
 		else{
 			return false;
@@ -693,7 +692,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmCar.reserveCar(id, customerID, location);
+			return rmCar.reserveCar(id, customerID, location);
 		}
 		else{
 			return false;
@@ -720,7 +719,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmHotel.reserveRoom(id, customerID, location);
+			return rmHotel.reserveRoom(id, customerID, location);
 		}
 		else{
 			return false;
@@ -746,7 +745,7 @@ public class ResourceManagerImpl
 		try{
 		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			return true;//return rmFlight.reserveFlight(id, customerID, flightNum);
+			return rmFlight.reserveFlight(id, customerID, flightNum);
 		}
 		else{
 			return false;
@@ -782,7 +781,7 @@ public class ResourceManagerImpl
 				
 		
 			System.out.println("Lock granted");
-		/*	if(Car)
+			if(Car)
 		    		{
 		    		result = rmCar.itinerary(id, customer, flightNumbers, location, Car, Room);
 		    		System.out.println("car result"+result);
@@ -806,7 +805,7 @@ public class ResourceManagerImpl
 			
 		    	if(result == false)
 		    		abort(id);
-		*/
+		
 			return result;  
 		}catch(DeadlockException e){
 			System.out.println(e.getMessage());
@@ -830,7 +829,7 @@ public class ResourceManagerImpl
     
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException, Exception{
    	 try{
-	/*	if((rmCar.commit(transactionId) == true ) && (rmFlight.commit(transactionId) == true) && (rmHotel.commit(transactionId) == true)){
+		if((rmCar.commit(transactionId) == true ) && (rmFlight.commit(transactionId) == true) && (rmHotel.commit(transactionId) == true)){
 			lm.UnlockAll(transactionId);
 			return true;
 		}
@@ -838,9 +837,8 @@ public class ResourceManagerImpl
 			lm.UnlockAll(transactionId);
 			throw new TransactionAbortedException("Server could not process your request. Transaction "+transactionId+" has been aborted!");
 		}
-	*/
-			lm.UnlockAll(transactionId);
-			return true;
+	
+			
 	}
 	/*
 	catch(InvalidTransactionException e){
@@ -857,11 +855,11 @@ public class ResourceManagerImpl
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException, Exception{
     	try{
-	    	/*
+	    	
 	    	rmCar.abort(transactionId);    
 	    	rmFlight.abort(transactionId);    
 	    	rmHotel.abort(transactionId);
-	    	*/
+	    	
 	    	lm.UnlockAll(transactionId);    
 	}
 	/*

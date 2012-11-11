@@ -287,7 +287,8 @@ public class LockManager
         
         synchronized (thisThread) {
             try {
-                thisThread.wait(LockManager.DEADLOCK_TIMEOUT - timeBlocked);
+                //thisThread.wait(LockManager.DEADLOCK_TIMEOUT - timeBlocked);
+                thisThread.wait(2000);
                 TimeObj currTime = new TimeObj(dataObj.getXId());
                 timeBlocked = currTime.getTime() - timestamp.getTime();
                 if (timeBlocked >= LockManager.DEADLOCK_TIMEOUT) {
