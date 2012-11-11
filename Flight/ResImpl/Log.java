@@ -9,7 +9,7 @@ class Log{
 	Log(){
 		super();
 	}
-	Log(int xId,RMHashtable log,String key,int flag){
+	Log(int xId,RMHashtable log){
 		this.xId=xId;
 		this.logTable=log;
 	}
@@ -44,6 +44,9 @@ class Log{
 	
 	Vector getValues(){
 		return (Vector)logTable.values();
+	}
+	Enumeration getKeys(){
+		return logTable.keys();
 	}
 	
 }

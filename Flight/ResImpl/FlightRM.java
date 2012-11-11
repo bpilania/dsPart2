@@ -31,14 +31,14 @@ public class FlightRM
 	 try 
 	     {
 		 // create a new Server object
-		 FlightRM obj = new FlightRM();
+		 /* FlightRM obj = new FlightRM();
 		 // dynamically generate the stub (client proxy)
 		 ResourceManager rm = (ResourceManager) UnicastRemoteObject.exportObject(obj, 0);
 		 
 		 // Bind the remote object's stub in the registry
 		 Registry registry = LocateRegistry.getRegistry(8778);
 		 registry.rebind("Group4FlightRM", rm);
-		 
+		 */
 		 System.err.println("Flight Server ready");
 	     } 
 	 catch (Exception e) 
@@ -96,12 +96,19 @@ public class FlightRM
 	
 	
 	private void writeDataToLog(int xId, String key, RMItem value){
+		System.out.println("entering writedatatolog");
 		synchronized(logArray){
 			Log temp;
 			int indx;
 			if((indx=logContains(xId))!=-1){
 				temp=(Log)logArray.elementAt(indx);
 				temp.put(key,value);
+			}
+			else{
+				temp=new Log(xId,new RMHashtable());
+				temp.put(key,value);
+				logArray.add(temp);
+				
 			}	
 		}
 	}
@@ -121,7 +128,8 @@ public class FlightRM
 	
 	protected boolean removeDataFromLog(int xId){
 		int indx=logContains(xId);
-		logArray.remove(indx);
+		if(indx>=0)
+			logArray.remove(indx);
 		return true;
 	}
 	
@@ -130,12 +138,17 @@ public class FlightRM
 	{
 		Trace.info("RM::deleteItem(" + id + ", " + key + ") called" );
 		ReservableItem curObj = (ReservableItem) readData( id, key );
+		Flight tempItem =new Flight(Integer.parseInt(curObj.getLocation()),curObj.getCount(),curObj.getPrice());
+		tempItem.setReserved(curObj.getReserved());
 		// Check if there is such an item in the storage
 		if( curObj == null ) {
 			Trace.warn("RM::deleteItem(" + id + ", " + key + ") failed--item doesn't exist" );
 			return false;
 		} else {
 			if(curObj.getReserved()==0){
+			
+				tempItem.setType(0);
+				writeDataToLog(id,curObj.getKey(),tempItem);
 				removeData(id, curObj.getKey());
 				Trace.info("RM::deleteItem(" + id + ", " + key + ") item deleted" );
 				return true;
@@ -184,6 +197,8 @@ public class FlightRM
 		
 		// check if the item is available
 		ReservableItem item = (ReservableItem)readData(id, key);
+		Flight tempItem =new Flight(Integer.parseInt(item.getLocation()),item.getCount(),item.getPrice());
+		tempItem.setReserved(item.getReserved());
 		if(item==null){
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " +location+") failed--item doesn't exist" );
 			return false;
@@ -191,13 +206,26 @@ public class FlightRM
 			Trace.warn("RM::reserveItem( " + id + ", " + customerID + ", " + key+", " + location+") failed--No more items" );
 			return false;
 		}else{			
-			cust.reserve( key, location, item.getPrice());		
+			Customer temp=cust.clone();
+			temp.setType(1);
+			if(readDataFromLog(id,cust.getKey(),id)==null){
+				writeDataToLog(id,cust.getKey(),temp);
+			}
+			cust.reserve( key, location, item.getPrice());
+					
 			writeData( id, cust.getKey(), cust );
+			
+			
 			
 			// decrease the number of available items in the storage
 			item.setCount(item.getCount() - 1);
 			item.setReserved(item.getReserved()+1);
 			
+			if(readDataFromLog(id,item.getKey(),id)==null){
+				tempItem.setType(0);
+				writeDataToLog(id,item.getKey(),tempItem);
+				
+			}
 			Trace.info("RM::reserveItem( " + id + ", " + customerID + ", " + key + ", " +location+") succeeded" );
 			return true;
 		}		
@@ -214,17 +242,23 @@ public class FlightRM
 			// doesn't exist...add it
 			Flight newObj = new Flight( flightNum, flightSeats, flightPrice );
 			
-			writeData( id, newObj.getKey(), newObj );
+			writeData( id, newObj.getKey(), newObj);
 			String key=newObj.getKey();
-			
-			writeDataToLog(id,key,newObj);
+			if(readDataFromLog(id,key,id)==null){
+				Flight logObj =(Flight)newObj.clone();
+				logObj.setCount(-1);
+				logObj.type=0;
+				writeDataToLog(id,key,logObj);
+			}
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
 		} else {
 			// add seats to existing flight and update the price...
-			writeDataToLog(id,curObj.getKey(),curObj);
-			curObj.setCount( curObj.getCount() + flightSeats );
+			Flight logObj =(Flight)curObj.clone();
+			if(readDataFromLog(id,curObj.getKey(),id)==null)
+				writeDataToLog(id,curObj.getKey(),logObj);
 			
+			curObj.setCount( curObj.getCount() + flightSeats );
 			if( flightPrice > 0 ) {
 				curObj.setPrice( flightPrice );
 			} // if
@@ -249,22 +283,7 @@ public class FlightRM
 	public boolean addRooms(int id, String location, int count, int price)
 		throws RemoteException
 	{
-		Trace.info("RM::addRooms(" + id + ", " + location + ", " + count + ", $" + price + ") called" );
-		Hotel curObj = (Hotel) readData( id, Hotel.getKey(location) );
-		if( curObj == null ) {
-			// doesn't exist...add it
-			Hotel newObj = new Hotel( location, count, price );
-			writeData( id, newObj.getKey(), newObj );
-			Trace.info("RM::addRooms(" + id + ") created new room location " + location + ", count=" + count + ", price=$" + price );
-		} else {
-			// add count to existing object and update price...
-			curObj.setCount( curObj.getCount() + count );
-			if( price > 0 ) {
-				curObj.setPrice( price );
-			} // if
-			writeData( id, curObj.getKey(), curObj );
-			Trace.info("RM::addRooms(" + id + ") modified existing location " + location + ", count=" + curObj.getCount() + ", price=$" + price );
-		} // else
+	
 		return(true);
 	}
 
@@ -281,22 +300,7 @@ public class FlightRM
 	public boolean addCars(int id, String location, int count, int price)
 		throws RemoteException
 	{
-		Trace.info("RM::addCars(" + id + ", " + location + ", " + count + ", $" + price + ") called" );
-		Car curObj = (Car) readData( id, Car.getKey(location) );
-		if( curObj == null ) {
-			// car location doesn't exist...add it
-			Car newObj = new Car( location, count, price );
-			writeData( id, newObj.getKey(), newObj );
-			Trace.info("RM::addCars(" + id + ") created new location " + location + ", count=" + count + ", price=$" + price );
-		} else {
-			// add count to existing car location and update price...
-			curObj.setCount( curObj.getCount() + count );
-			if( price > 0 ) {
-				curObj.setPrice( price );
-			} // if
-			writeData( id, curObj.getKey(), curObj );
-			Trace.info("RM::addCars(" + id + ") modified existing location " + location + ", count=" + curObj.getCount() + ", price=$" + price );
-		} // else
+		
 		return(true);
 	}
 
@@ -317,18 +321,6 @@ public class FlightRM
 		return queryNum(id, Flight.getKey(flightNum));
 	}
 
-	// Returns the number of reservations for this flight. 
-//	public int queryFlightReservations(int id, int flightNum)
-//		throws RemoteException
-//	{
-//		Trace.info("RM::queryFlightReservations(" + id + ", #" + flightNum + ") called" );
-//		RMInteger numReservations = (RMInteger) readData( id, Flight.getNumReservationsKey(flightNum) );
-//		if( numReservations == null ) {
-//			numReservations = new RMInteger(0);
-//		} // if
-//		Trace.info("RM::queryFlightReservations(" + id + ", #" + flightNum + ") returns " + numReservations );
-//		return numReservations.getValue();
-//	}
 
 
 	// Returns price of this flight
@@ -418,6 +410,10 @@ public class FlightRM
 								String.valueOf( Math.round( Math.random() * 100 + 1 )));
 		Customer cust = new Customer( cid );
 		writeData( id, cust.getKey(), cust );
+		Customer temp=cust.clone();
+		temp.setID(-1);
+		temp.setType(1);
+		writeDataToLog(id,cust.getKey(),temp);
 		Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid );
 		return cid;
 	}
@@ -431,6 +427,10 @@ public class FlightRM
 		if( cust == null ) {
 			cust = new Customer(customerID);
 			writeData( id, cust.getKey(), cust );
+			Customer temp=cust.clone();
+			temp.setType(1);
+			temp.setID(-1);
+			writeDataToLog(id,cust.getKey(),temp);
 			Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") created a new customer" );
 			return true;
 		} else {
@@ -446,6 +446,7 @@ public class FlightRM
 	{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
+		Customer temp=cust.clone();
 		if( cust == null ) {
 			Trace.warn("RM::deleteCustomer(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return false;
@@ -458,11 +459,19 @@ public class FlightRM
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + " " +  reserveditem.getCount() +  " times"  );
 				ReservableItem item  = (ReservableItem) readData(id, reserveditem.getKey());
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + "which is reserved" +  item.getReserved() +  " times and is still available " + item.getCount() + " times"  );
+				Flight tempItem =new Flight(Integer.parseInt(item.getLocation()),item.getCount(),item.getPrice());
+				tempItem.setReserved(item.getReserved());
+				tempItem.setType(0);
 				item.setReserved(item.getReserved()-reserveditem.getCount());
 				item.setCount(item.getCount()+reserveditem.getCount());
+				if(readDataFromLog(id,item.getKey(),id)==null)
+					writeDataToLog(id,item.getKey(),tempItem);
 			}
 			
 			// remove the customer from the storage
+			temp.setType(1);
+			if(readDataFromLog(id,cust.getKey(),id)==null)
+				writeDataToLog(id,cust.getKey(),temp);
 			removeData(id, cust.getKey());
 			
 			Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") succeeded" );
@@ -472,23 +481,6 @@ public class FlightRM
 
 
 
-
-	// Frees flight reservation record. Flight reservation records help us make sure we
-	//  don't delete a flight if one or more customers are holding reservations
-//	public boolean freeFlightReservation(int id, int flightNum)
-//		throws RemoteException
-//	{
-//		Trace.info("RM::freeFlightReservations(" + id + ", " + flightNum + ") called" );
-//		RMInteger numReservations = (RMInteger) readData( id, Flight.getNumReservationsKey(flightNum) );
-//		if( numReservations != null ) {
-//			numReservations = new RMInteger( Math.max( 0, numReservations.getValue()-1) );
-//		} // if
-//		writeData(id, Flight.getNumReservationsKey(flightNum), numReservations );
-//		Trace.info("RM::freeFlightReservations(" + id + ", " + flightNum + ") succeeded, this flight now has "
-//				+ numReservations + " reservations" );
-//		return true;
-//	}
-//	
 
 	
 	// Adds car reservation to this customer. 
@@ -509,6 +501,7 @@ public class FlightRM
 	public boolean reserveFlight(int id, int customerID, int flightNum)
 		throws RemoteException
 	{
+		
 		return reserveItem(id, customerID, Flight.getKey(flightNum), String.valueOf(flightNum));
 	}
 	
@@ -537,9 +530,48 @@ public class FlightRM
     }
     
     public void abort(int transactionId) throws RemoteException,InvalidTransactionException{    
-    	Log temp=(Log)logArray.elementAt(logContains(transactionId));
-    	Vector val= temp.getValues();
+    	int indx=logContains(transactionId);
     	
+    	Log temp;
+    	
+    	if(indx>-1){
+    		
+    		temp=(Log)logArray.elementAt(indx);
+    		
+    	}
+    	else{
+    		System.out.println("nothing in array");
+    		return;
+    	}
+    	
+ 	for(Enumeration e = temp.getKeys(); e.hasMoreElements();){
+ 		System.out.println("For loop");
+ 		String key = (String) (e.nextElement());
+ 		RMItem obj=temp.get(key);
+ 		if(obj.getType()==0){
+ 			Flight flight=(Flight) obj;
+ 			if(flight.getCount()==-1){
+ 				System.out.println("entering count=-1 block");
+ 				removeData(transactionId,key);
+ 			}
+ 			else{
+ 				System.out.println("entering other block");
+ 				writeData(transactionId,key,flight);
+ 			
+ 			}
+ 		}
+ 		else if(obj.getType()==1){
+ 			Customer cust=(Customer)obj;
+ 			if(cust.getID()==-1){
+ 				System.out.println("entering remove data for customer");
+ 				removeData(transactionId,key);
+ 			}
+ 			else{
+ 				System.out.println("entering write data for customer");
+ 				writeData(transactionId,key,obj);
+ 			}
+ 		}
+ 	}   	
     	
     }    
  public boolean shutdown() throws RemoteException{
