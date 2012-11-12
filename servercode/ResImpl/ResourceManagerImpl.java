@@ -25,7 +25,9 @@ public class ResourceManagerImpl
     static ResourceManager rmFlight = null;
     static int xID = 0;
     static LockManager lm=null;
+    final static long maxTTL=3000000L;
     static Hashtable rmTracker=new Hashtable(); 
+    static Hashtable ttlTable=new Hashtable(); 
     
 
 	public static void main(String args[]) {
@@ -912,6 +914,7 @@ public class ResourceManagerImpl
     public int start() throws RemoteException{
   	xID = xID + 1;
   	addToTracker(xID);
+  	addToTTL(xID);
   	System.out.println("New xID is: "+xID);
 	return xID;
     }
@@ -919,12 +922,12 @@ public class ResourceManagerImpl
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException, Exception{
    	 try{
 		if((rmCar.commit(transactionId) == true ) && (rmFlight.commit(transactionId) == true) && (rmHotel.commit(transactionId) == true)){
-	    	removeFromTracker(transactionId);
+	    		removeFromTracker(transactionId);
 			lm.UnlockAll(transactionId);
 			return true;
 		}
 		else{
-	    	removeFromTracker(transactionId);
+	    		removeFromTracker(transactionId);
 			lm.UnlockAll(transactionId);
 			throw new TransactionAbortedException("Server could not process your request. Transaction "+transactionId+" has been aborted!");
 		}
@@ -951,6 +954,11 @@ public class ResourceManagerImpl
 	    	rmFlight.abort(transactionId);    
 	    	rmHotel.abort(transactionId);
 	    	removeFromTracker(transactionId);
+<<<<<<< HEAD
+	    	
+=======
+>>>>>>> 2dd2bb8d9c8e261538425d84eb7204e480bd66e8
+		removeFromTTL(transactionId);
 	    	lm.UnlockAll(transactionId);    
 	}
 	/*
@@ -970,23 +978,44 @@ public class ResourceManagerImpl
     
  public void run(){
  	try{
-    		Thread.sleep(1000);
-    		System.exit(0);
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
+ 		Thread.sleep(1000);
+		synchronized (this.ttlTable){ 
+			for(Enumeration e= ttlTable.keys();e.hasMoreElements();){
+				String key=(String)(e.nextElement());
+				Integer ttlObj=(Integer)ttlTable.get(key);
+				int ttl=ttlObj.intValue();
+				if(ttl<=0){
+					System.out.println("Aborting Transaction :"+ key);
+					abort(Integer.parseInt(key));
+				
+				}
+				else{
+					ttl-=1000;
+					ttlTable.put(key,ttl);
+				}
+			}	 	
+		}
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+ }
+ 
+ void removeFromTTL(int xId){
+ 	ttlTable.remove(Integer.toString(xId));
  	
  }
  
- 
+ void addToTTL(int xId){
+ 	ttlTable.put(xId,this.maxTTL);
+ }
  public boolean shutdown() throws RemoteException{
  	
  	if(rmTracker.isEmpty()){
  		
  		if(rmCar.shutdown()&&rmFlight.shutdown()&&rmHotel.shutdown()){
  		
- 			ResourceManagerImpl middleWare =new ResourceManagerImpl();
- 	 		Thread t=new Thread(middleWare);
+ 			Shutdown shut =new Shutdown();
+ 	 		Thread t=new Thread(shut);
  	 		t.start();
  			return true;		
  		}
@@ -1001,6 +1030,7 @@ public class ResourceManagerImpl
  	}
 	
  }
+ 
  
  public void addToTracker(int xid){
  	//creates hashtable entry for new transaction id
@@ -1022,3 +1052,4 @@ public boolean isValid(int xid){
  }
 
 }
+
