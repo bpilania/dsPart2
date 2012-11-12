@@ -26,6 +26,7 @@ public class ResourceManagerImpl
     static int xID = 0;
     static LockManager lm=null;
     static Hashtable rmTracker=new Hashtable(); 
+    static Hashtable ttlTable=new Hashtable(); 
     
 
 	public static void main(String args[]) {
@@ -949,7 +950,7 @@ public class ResourceManagerImpl
 	    	rmCar.abort(transactionId);    
 	    	rmFlight.abort(transactionId);    
 	    	rmHotel.abort(transactionId);
-	    	
+	    	removeFromTracker(transactionId);
 	    	lm.UnlockAll(transactionId);    
 	}
 	/*
@@ -968,12 +969,27 @@ public class ResourceManagerImpl
     
  public void run(){
  	try{
-    		Thread.sleep(1000);
-    		System.exit(0);
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
- 	
+ 		Thread.sleep(1000);
+		synchronized (this.ttlTable){ 
+			for(Enumeration e= ttlTable.keys();e.hasMoreElements();){
+				String key=(String)(e.nextElement());
+				Integer ttlObj=(Integer)ttlTable.get(key);
+				int ttl=ttlObj.intValue();
+				if(ttl<=0){
+					System.out.println("Aborting Transaction :"+ key);
+					abort(Integer.parseInt(key));
+					ttlTable.remove(key);
+				
+				}
+				else{
+					ttl-=1000;
+					ttlTable.put(key,ttl);
+				}
+			}	 	
+		}
+	}catch(Exception e){
+		e.printStackTrace();
+	}
  }
  
  
@@ -983,8 +999,8 @@ public class ResourceManagerImpl
  		
  		if(rmCar.shutdown()&&rmFlight.shutdown()&&rmHotel.shutdown()){
  		
- 			ResourceManagerImpl middleWare =new ResourceManagerImpl();
- 	 		Thread t=new Thread(middleWare);
+ 			Shutdown shut =new Shutdown();
+ 	 		Thread t=new Thread(shut);
  	 		t.start();
  			return true;		
  		}
@@ -999,6 +1015,7 @@ public class ResourceManagerImpl
  	}
 	
  }
+ 
  
  public void addToTracker(int xid){
  	//creates hashtable entry for new transaction id
@@ -1020,3 +1037,4 @@ public boolean isValid(int xid){
  }
 
 }
+
