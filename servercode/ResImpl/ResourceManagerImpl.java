@@ -25,6 +25,7 @@ public class ResourceManagerImpl
     static ResourceManager rmFlight = null;
     static int xID = 0;
     static LockManager lm=null;
+    final static long maxTTL=3000000L;
     static Hashtable rmTracker=new Hashtable(); 
     static Hashtable ttlTable=new Hashtable(); 
     
@@ -914,6 +915,7 @@ public class ResourceManagerImpl
     public int start() throws RemoteException{
   	xID = xID + 1;
   	addToTracker(xID);
+  	addToTTL(xID);
   	System.out.println("New xID is: "+xID);
 	return xID;
     }
@@ -951,6 +953,7 @@ public class ResourceManagerImpl
 	    	rmFlight.abort(transactionId);    
 	    	rmHotel.abort(transactionId);
 	    	removeFromTracker(transactionId);
+	    	removeFromTTL(transactionId);
 	    	lm.UnlockAll(transactionId);    
 	}
 	/*
@@ -978,7 +981,6 @@ public class ResourceManagerImpl
 				if(ttl<=0){
 					System.out.println("Aborting Transaction :"+ key);
 					abort(Integer.parseInt(key));
-					ttlTable.remove(key);
 				
 				}
 				else{
@@ -992,7 +994,14 @@ public class ResourceManagerImpl
 	}
  }
  
+ void removeFromTTL(int xId){
+ 	ttlTable.remove(Integer.toString(xId));
+ 	
+ }
  
+ void addToTTL(int xId){
+ 	ttlTable.put(xId,this.maxTTL);
+ }
  public boolean shutdown() throws RemoteException{
  	
  	if(rmTracker.isEmpty()){
