@@ -109,6 +109,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Adding a new Flight using id: "+arguments.elementAt(1));
 		    System.out.println("Flight number: "+arguments.elementAt(2));
 		    System.out.println("Add Flight Seats: "+arguments.elementAt(3));
@@ -151,6 +152,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Adding a new Car using id: "+arguments.elementAt(1));
 		    System.out.println("Car Location: "+arguments.elementAt(2));
 		    System.out.println("Add Number of Cars: "+arguments.elementAt(3));
@@ -191,6 +193,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Adding a new Room using id: "+arguments.elementAt(1));
 		    System.out.println("Room Location: "+arguments.elementAt(2));
 		    System.out.println("Add Number of Rooms: "+arguments.elementAt(3));
@@ -231,6 +234,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Adding a new Customer using id:"+arguments.elementAt(1));
 		    try{
 			Id = obj.getInt(arguments.elementAt(1));
@@ -266,6 +270,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Deleting a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Flight Number: "+arguments.elementAt(2));
 		    try{
@@ -304,6 +309,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Deleting the cars from a particular location  using id: "+arguments.elementAt(1));
 		    System.out.println("Car Location: "+arguments.elementAt(2));
 		    try{
@@ -341,6 +347,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Deleting all rooms from a particular location  using id: "+arguments.elementAt(1));
 		    System.out.println("Room Location: "+arguments.elementAt(2));
 		    try{
@@ -377,6 +384,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Deleting a customer from the database using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    try{
@@ -414,6 +422,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Flight number: "+arguments.elementAt(2));
 		    try{
@@ -448,6 +457,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying a car location using id: "+arguments.elementAt(1));
 		    System.out.println("Car location: "+arguments.elementAt(2));
 		    try{
@@ -482,6 +492,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying a room location using id: "+arguments.elementAt(1));
 		    System.out.println("Room location: "+arguments.elementAt(2));
 		    try{
@@ -516,6 +527,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying Customer information using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    try{
@@ -550,6 +562,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying a flight Price using id: "+arguments.elementAt(1));
 		    System.out.println("Flight number: "+arguments.elementAt(2));
 		    try{
@@ -584,6 +597,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying a car price using id: "+arguments.elementAt(1));
 		    System.out.println("Car location: "+arguments.elementAt(2));
 		    try{
@@ -618,6 +632,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 	    		}
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Querying a room price using id: "+arguments.elementAt(1));
 		    System.out.println("Room Location: "+arguments.elementAt(2));
 		    try{
@@ -652,6 +667,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Reserving a seat on a flight using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    System.out.println("Flight number: "+arguments.elementAt(3));
@@ -690,6 +706,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Reserving a car at a location using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    System.out.println("Location: "+arguments.elementAt(3));
@@ -730,6 +747,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Reserving a room at a location using id: "+arguments.elementAt(1));
 		    System.out.println("Customer id: "+arguments.elementAt(2));
 		    System.out.println("Location: "+arguments.elementAt(3));
@@ -769,6 +787,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Reserving an Itinerary using id:"+arguments.elementAt(1));
 		    System.out.println("Customer id:"+arguments.elementAt(2));
 		    for(int i=0;i<arguments.size()-6;i++)
@@ -846,6 +865,7 @@ public class client
 	    		System.out.println("No transaction running. Please start a transaction using START command."); 
 	    		break;
 		    }
+		    System.out.println("Processing request using Transaction ID: "+xID);
 		    System.out.println("Adding a new Customer using id:"+arguments.elementAt(1) + " and cid " +arguments.elementAt(2));
 		    try{
 			Id = obj.getInt(arguments.elementAt(1));
@@ -970,6 +990,27 @@ public class client
 		    }
 			break;
 			
+		case 26:  //shutdown
+		    if(arguments.size()!=1){
+			obj.wrongNumber();
+			break;
+		    }
+		    if(xID != 0){
+	    		System.out.println("Please close your transaction before initiating shutdown!"); 
+	    		break;
+		    }
+		    try{
+		    	if(rm.shutdown())
+		    		System.out.println("System Shutdown Completed!");
+		    	else
+		    		System.out.println("Active transactions found! Cannot shutdown system!");
+		    }catch(Exception e){
+			System.out.println("EXCEPTION:");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		    }
+			break;
+		
 		default:
 		    System.out.println("The interface does not support this command.");
 		    break;
@@ -1042,6 +1083,8 @@ public class client
 	    return 24;
 	else if (argument.compareToIgnoreCase("abort")==0)
 	    return 25;
+	else if (argument.compareToIgnoreCase("shutdown")==0)
+	    return 26;
 	else
 	    return 666;
 
@@ -1055,7 +1098,7 @@ public class client
 	System.out.println("start\nnewflight\nnewcar\nnewroom\nnewcustomer\nnewcusomterid\ndeleteflight\ndeletecar\ndeleteroom");
 	System.out.println("deletecustomer\nqueryflight\nquerycar\nqueryroom\nquerycustomer");
 	System.out.println("queryflightprice\nquerycarprice\nqueryroomprice");
-	System.out.println("reserveflight\nreservecar\nreserveroom\nitinerary\ncommit");
+	System.out.println("reserveflight\nreservecar\nreserveroom\nitinerary\ncommit\nshutdown");
 	System.out.println("quit");
 	System.out.println("\ntype help, <commandname> for detailed info(NOTE the use of comma).");
     }
@@ -1266,6 +1309,15 @@ public class client
 			System.out.println("\nUsage:");
 			System.out.println("\nabort");
 			break;
+			
+	    case 26:  //Shutdown 
+			System.out.println("Shutdown the system");
+			System.out.println("Purpose:");
+			System.out.println("\tTo shutdown the system when there is no active transaction");
+			System.out.println("\nUsage:");
+			System.out.println("\nshutdown");
+			break;
+			
 	    default:
 		System.out.println(command);
 		System.out.println("The interface does not support this command.");

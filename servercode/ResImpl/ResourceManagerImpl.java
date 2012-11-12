@@ -657,7 +657,7 @@ public class ResourceManagerImpl
 		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			enlist(id,"Flight X");
 			enlist(id,"Hotel X");
-			enlist(id,"Cars X");
+			enlist(id,"Car X");
 			System.out.println("Lock granted");
 		  	boolean result;
 		  	
@@ -761,7 +761,6 @@ public class ResourceManagerImpl
 			}
 		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
 			System.out.println("Lock granted");
-			enlist(id,"Car X");
 			enlist(id,"Car X");
 			return rmCar.reserveCar(id, customerID, location);
 		}
@@ -923,10 +922,12 @@ public class ResourceManagerImpl
     public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException, Exception{
    	 try{
 		if((rmCar.commit(transactionId) == true ) && (rmFlight.commit(transactionId) == true) && (rmHotel.commit(transactionId) == true)){
+	    		removeFromTracker(transactionId);
 			lm.UnlockAll(transactionId);
 			return true;
 		}
 		else{
+	    		removeFromTracker(transactionId);
 			lm.UnlockAll(transactionId);
 			throw new TransactionAbortedException("Server could not process your request. Transaction "+transactionId+" has been aborted!");
 		}
@@ -953,7 +954,11 @@ public class ResourceManagerImpl
 	    	rmFlight.abort(transactionId);    
 	    	rmHotel.abort(transactionId);
 	    	removeFromTracker(transactionId);
-	    	removeFromTTL(transactionId);
+<<<<<<< HEAD
+	    	
+=======
+>>>>>>> 2dd2bb8d9c8e261538425d84eb7204e480bd66e8
+		removeFromTTL(transactionId);
 	    	lm.UnlockAll(transactionId);    
 	}
 	/*
@@ -963,6 +968,7 @@ public class ResourceManagerImpl
 	}
 	*/
 	catch(Exception e){
+	    	removeFromTracker(transactionId);
 	    	lm.UnlockAll(transactionId);    
 		throw e;
 	}
@@ -1035,7 +1041,7 @@ public class ResourceManagerImpl
  public void enlist(int xid,String rmVal){
  	Vector vec = (Vector) rmTracker.get(xid);
  	vec.add(rmVal);
- 	rmTracker.put(xid,rmVal);
+ 	rmTracker.put(xid,vec);
  }
 
 public boolean isValid(int xid){
