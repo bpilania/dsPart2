@@ -586,8 +586,8 @@ public class FlightRM
     }
  public boolean shutdown() throws RemoteException{
  	
- 	FlightRM car1=new FlightRM();
- 	 Thread t=new Thread(car1);
+ 	FlightRM flight1=new FlightRM();
+ 	 Thread t=new Thread(flight1);
  	 t.start();
  	return true;
  }

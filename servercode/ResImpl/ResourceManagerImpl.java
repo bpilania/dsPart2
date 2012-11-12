@@ -17,7 +17,7 @@ import LockManager.*;
 
 //public class ResourceManagerImpl extends java.rmi.server.UnicastRemoteObject
 public class ResourceManagerImpl
-	implements ResourceManager {
+	implements ResourceManager, Runnable {
 	
 	protected RMHashtable m_itemHT = new RMHashtable();
     static ResourceManager rmCar = null;
@@ -912,6 +912,7 @@ public class ResourceManagerImpl
     
     public int start() throws RemoteException{
   	xID = xID + 1;
+  	addToTracker(xID);
   	System.out.println("New xID is: "+xID);
 	return xID;
     }
@@ -965,13 +966,33 @@ public class ResourceManagerImpl
     }    
     
     
+ public void run(){
+ 	try{
+    		Thread.sleep(1000);
+    		System.exit(0);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+ 	
+ }
+ 
+ 
  public boolean shutdown() throws RemoteException{
  	
  	if(rmTracker.isEmpty()){
- 		rmCar.shutdown();
- 		rmFlight.shutdown();
- 		rmHotel.shutdown();
- 		return true;		
+ 		
+ 		if(rmCar.shutdown()&&rmFlight.shutdown()&&rmHotel.shutdown()){
+ 		
+ 			ResourceManagerImpl middleWare =new ResourceManagerImpl();
+ 	 		Thread t=new Thread(middleWare);
+ 	 		t.start();
+ 			return true;		
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 		
+ 				
  	}
  	else {
  		return false;
@@ -979,10 +1000,10 @@ public class ResourceManagerImpl
 	
  }
  
- public  void addToTracker(int xid){
+ public void addToTracker(int xid){
  	//creates hashtable entry for new transaction id
  	Vector rmValues=new Vector();
- 	rmTracker.put(xid,rmValues);
+ 	rmTracker.put(xid,(Vector)rmValues);
  }
  
  public void enlist(int xid,String rmVal){
