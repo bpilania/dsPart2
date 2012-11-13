@@ -25,7 +25,7 @@ public class ResourceManagerImpl
     static ResourceManager rmFlight = null;
     static int xID = 0;
     static LockManager lm=null;
-    final static long maxTTL=3000000L;
+    final static int maxTTL=120000;
     static Hashtable rmTracker=new Hashtable(); 
     static Hashtable ttlTable=new Hashtable(); 
     
