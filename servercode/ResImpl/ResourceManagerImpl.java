@@ -25,7 +25,7 @@ public class ResourceManagerImpl
     static ResourceManager rmFlight = null;
     static int xID = 0;
     static LockManager lm=null;
-    final static long maxTTL=3000000L;
+    final static int maxTTL=120000;
     static Hashtable rmTracker=new Hashtable(); 
     static Hashtable ttlTable=new Hashtable(); 
     
@@ -114,938 +114,1036 @@ public class ResourceManagerImpl
 	 }
 	
 
-	 	// Reads a data item
-	 	private RMItem readData( int id, String key )
-	 	{
-	 		synchronized(m_itemHT){
-	 			return (RMItem) m_itemHT.get(key);
-	 		}
-	 	}
-	 
-	 	// Writes a data item
-	 	private void writeData( int id, String key, RMItem value )
-	 	{
-	 		synchronized(m_itemHT){
-	 			m_itemHT.put(key, value);
-	 		}
-	 	}
-	 	
-	 	// Remove the item out of storage
-	 	protected RMItem removeData(int id, String key){
-	 		synchronized(m_itemHT){
-	 			return (RMItem)m_itemHT.remove(key);
-	 		}
-	 	}
-	 	
-	 	
-	 	// deletes the entire item
-	 	protected boolean deleteItem(int id, String key)
-	 	{
-	 		return deleteItem(id,key);
-	 	}
-	 	
-	 
-	 	// query the number of available seats/rooms/cars
-	 	protected int queryNum(int id, String key) {
+	// Reads a data item
+	private RMItem readData(int id, String key) {
+		synchronized (m_itemHT) {
+			return (RMItem) m_itemHT.get(key);
+		}
+	}
 
-	 		return 0;
-	 	}	
-	 	
-	 	// query the price of an item
-	 	protected int queryPrice(int id, String key){
-	
-	 	return 0;
-	 	}
-	 	
-	 	// reserve an item
-	 	protected boolean reserveItem(int id, int customerID, String key, String location){
-		
-	 	return true;
-	 	}
-	
+	// Writes a data item
+	private void writeData(int id, String key, RMItem value) {
+		synchronized (m_itemHT) {
+			m_itemHT.put(key, value);
+		}
+	}
+
+	// Remove the item out of storage
+	protected RMItem removeData(int id, String key) {
+		synchronized (m_itemHT) {
+			return (RMItem) m_itemHT.remove(key);
+		}
+	}
+
+	// deletes the entire item
+	protected boolean deleteItem(int id, String key) {
+		return deleteItem(id, key);
+	}
+
+	// query the number of available seats/rooms/cars
+	protected int queryNum(int id, String key) {
+
+		return 0;
+	}
+
+	// query the price of an item
+	protected int queryPrice(int id, String key) {
+
+		return 0;
+	}
+
+	// reserve an item
+	protected boolean reserveItem(int id, int customerID, String key,
+			String location) {
+
+		return true;
+	}
+
 	// Create a new flight, or add seats to existing flight
-	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
-	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	// NOTE: if flightPrice <= 0 and the flight already exists, it maintains its
+	// current price
+	public boolean addFlight(int id, int flightNum, int flightSeats,
+			int flightPrice) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Flight X");
-			return rmFlight.addFlight(id, flightNum, flightSeats, flightPrice);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, ("flight" + flightNum).trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Flight X");
+				return rmFlight.addFlight(id, flightNum, flightSeats,
+						flightPrice);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-			
-		}
-		*/
-		catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!");
+		 * 
+		 * }
+		 */
+		catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-	
-	public boolean deleteFlight(int id, int flightNum)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{	
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+
+	public boolean deleteFlight(int id, int flightNum) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Flight X");
-			return rmFlight.deleteFlight(id, flightNum);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, ("flight" + flightNum).trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Flight X");
+				return rmFlight.deleteFlight(id, flightNum);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
-		
+
 	}
 
 	// Create a new room location or add rooms to an existing location
-	//  NOTE: if price <= 0 and the room location already exists, it maintains its current price
+	// NOTE: if price <= 0 and the room location already exists, it maintains
+	// its current price
 	public boolean addRooms(int id, String location, int count, int price)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Hotel X");
-			return rmHotel.addRooms(id, location, count, price);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "hotel" + location.trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Hotel X");
+				return rmHotel.addRooms(id, location, count, price);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
-		
+
 	}
 
 	// Delete rooms from a location
-	public boolean deleteRooms(int id, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-			throw new InvalidTransactionException(id,"Transaction Id is not valid");
-		}
-		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Hotel X");
-			return rmHotel.deleteRooms(id, location);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+	public boolean deleteRooms(int id, String location) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
+			}
+			if (lm.Lock(id, "hotel" + location.trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Hotel X");
+				return rmHotel.deleteRooms(id, location);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
 	// Create a new car location or add cars to an existing location
-	//  NOTE: if price <= 0 and the location already exists, it maintains its current price
+	// NOTE: if price <= 0 and the location already exists, it maintains its
+	// current price
 	public boolean addCars(int id, String location, int count, int price)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-			throw new InvalidTransactionException(id,"Transaction Id is not valid");
-		}
-		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Car X");
-			return rmCar.addCars(id, location, count, price);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
+			}
+			if (lm.Lock(id, "car" + location.trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Car X");
+				return rmCar.addCars(id, location, count, price);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-
 
 	// Delete cars from a location
-	public boolean deleteCars(int id, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-			throw new InvalidTransactionException(id,"Transaction Id is not valid");
-		}
-		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Car X");
-			return rmCar.deleteCars(id, location);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+	public boolean deleteCars(int id, String location) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
+			}
+			if (lm.Lock(id, "car" + location.trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Car X");
+				return rmCar.deleteCars(id, location);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-
-
 
 	// Returns the number of empty seats on this flight
-	public int queryFlight(int id, int flightNum)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-			if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public int queryFlight(int id, int flightNum) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-			if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.READ)){
+			if (lm.Lock(id, ("flight" + flightNum).trim().toString(),
+					LockManager.READ)) {
 				System.out.println("Lock granted");
-				enlist(id,"Flight S");
+				enlist(id, "Flight S");
 				return rmFlight.queryFlight(id, flightNum);
-			}
-			else{
+			} else {
 				return 0;
 			}
-		}catch(DeadlockException e){
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-
 
 	// Returns price of this flight
-	public int queryFlightPrice(int id, int flightNum )
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-			if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public int queryFlightPrice(int id, int flightNum) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.READ)){
-			System.out.println("Lock granted");
-			enlist(id,"Flight S");
-			return rmFlight.queryFlightPrice(id, flightNum);
-		}
-		else{
-			return 0;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, ("flight" + flightNum).trim().toString(),
+					LockManager.READ)) {
+				System.out.println("Lock granted");
+				enlist(id, "Flight S");
+				return rmFlight.queryFlightPrice(id, flightNum);
+			} else {
+				return 0;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-
 
 	// Returns the number of rooms available at a location
-	public int queryRooms(int id, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public int queryRooms(int id, String location) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.READ)){
-			System.out.println("Lock granted");
-			enlist(id,"Hotel S");
-			return rmHotel.queryRooms(id, location);
-		}
-		else{
-			return 0;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "hotel" + location.trim().toString(),
+					LockManager.READ)) {
+				System.out.println("Lock granted");
+				enlist(id, "Hotel S");
+				return rmHotel.queryRooms(id, location);
+			} else {
+				return 0;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
-	
 	// Returns room price at this location
-	public int queryRoomsPrice(int id, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public int queryRoomsPrice(int id, String location) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.READ)){
-			System.out.println("Lock granted");
-			enlist(id,"Hotel S");
-			return rmHotel.queryRoomsPrice(id, location);
-		}
-		else{
-			return 0;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "hotel" + location.trim().toString(),
+					LockManager.READ)) {
+				System.out.println("Lock granted");
+				enlist(id, "Hotel S");
+				return rmHotel.queryRoomsPrice(id, location);
+			} else {
+				return 0;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-
 
 	// Returns the number of cars available at a location
-	public int queryCars(int id, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public int queryCars(int id, String location) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.READ)){
-			System.out.println("Lock granted");
-			enlist(id,"Car X");
-			return rmCar.queryCars(id, location);
-		}
-		else{
-			return 0;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "car" + location.trim().toString(),
+					LockManager.READ)) {
+				System.out.println("Lock granted");
+				enlist(id, "Car X");
+				return rmCar.queryCars(id, location);
+			} else {
+				return 0;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-
 
 	// Returns price of cars at this location
-	public int queryCarsPrice(int id, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public int queryCarsPrice(int id, String location) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.READ)){
-			System.out.println("Lock granted");
-			enlist(id,"Car S");
-			return rmCar.queryCarsPrice(id, location);
-		}
-		else{
-			return 0;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "car" + location.trim().toString(),
+					LockManager.READ)) {
+				System.out.println("Lock granted");
+				enlist(id, "Car S");
+				return rmCar.queryCarsPrice(id, location);
+			} else {
+				return 0;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
-	// Returns data structure containing customer reservation info. Returns null if the
-	//  customer doesn't exist. Returns empty RMHashtable if customer exists but has no
-	//  reservations.
+	// Returns data structure containing customer reservation info. Returns null
+	// if the
+	// customer doesn't exist. Returns empty RMHashtable if customer exists but
+	// has no
+	// reservations.
 	public RMHashtable getCustomerReservations(int id, int customerID)
-		throws RemoteException
-	{
+			throws RemoteException {
 
 		return new RMHashtable();
 	}
 
-	 //return a bill
+	// return a bill
 	public String queryCustomerInfo(int id, int customerID)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.READ)){
-			enlist(id,"Flight S");
-			enlist(id,"Car S");
-			enlist(id,"Hotel S");
-			String s="BIll for Customer ID"+ customerID+":\n";
-		
-			s=s+rmCar.queryCustomerInfo(id, customerID);
-		
-			s=s+ rmFlight.queryCustomerInfo(id, customerID);
-		
-			s=s+rmHotel.queryCustomerInfo(id, customerID);
+			if (lm.Lock(id, ("customer" + customerID).trim().toString(),
+					LockManager.READ)) {
+				enlist(id, "Flight S");
+				enlist(id, "Car S");
+				enlist(id, "Hotel S");
+				String s = "BIll for Customer ID" + customerID + ":\n";
 
-			return s;
-		}
-		else{
-			return "No Bill";
-		}
-		}catch(DeadlockException e){
+				s = s + rmCar.queryCustomerInfo(id, customerID);
+
+				s = s + rmFlight.queryCustomerInfo(id, customerID);
+
+				s = s + rmHotel.queryCustomerInfo(id, customerID);
+
+				return s;
+			} else {
+				return "No Bill";
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
-  // customer functions
-  // new customer just returns a unique customer identifier
-	
-  public int newCustomer(int id)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		int cid;
-	  	boolean result;
-		cid = Integer.parseInt( String.valueOf(id) +
-				String.valueOf(Calendar.getInstance().get(Calendar.MILLISECOND)) +
-				String.valueOf( Math.round( Math.random() * 100 + 1 )));
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
-			}
-		if(lm.Lock (id, ("customer"+cid).trim().toString(), LockManager.WRITE)){
-			enlist(id,"Flight X");
-			enlist(id,"Car X");
-			enlist(id,"Hotel X");
-		  	if(rmCar.newCustomer(id,cid)){
-		  		if(rmFlight.newCustomer(id,cid)){
-		  			if(rmHotel.newCustomer(id,cid)){
-		  				System.out.println("Lock granted");
-						return cid;
-					}
-					else{
-					return 0;
-					}
-				}
-				else{
-				return 0;
-				}
-			}
-			else{
-			return 0;
-			}
-			
-		  	
-			//Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid ); //To be activated later
+	// customer functions
+	// new customer just returns a unique customer identifier
 
-		}
-		else{
-			return 0;
-		}
-		}catch(DeadlockException e){
+	public int newCustomer(int id) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		int cid;
+		boolean result;
+		cid = Integer.parseInt(String.valueOf(id)
+				+ String.valueOf(Calendar.getInstance().get(
+						Calendar.MILLISECOND))
+				+ String.valueOf(Math.round(Math.random() * 100 + 1)));
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
+			}
+			if (lm.Lock(id, ("customer" + cid).trim().toString(),
+					LockManager.WRITE)) {
+				enlist(id, "Flight X");
+				enlist(id, "Car X");
+				enlist(id, "Hotel X");
+				if (rmCar.newCustomer(id, cid)) {
+					if (rmFlight.newCustomer(id, cid)) {
+						if (rmHotel.newCustomer(id, cid)) {
+							System.out.println("Lock granted");
+							return cid;
+						} else {
+							return 0;
+						}
+					} else {
+						return 0;
+					}
+				} else {
+					return 0;
+				}
+
+				// Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid
+				// ); //To be activated later
+
+			} else {
+				return 0;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
 	// I opted to pass in customerID instead. This makes testing easier
-  public boolean newCustomer(int id, int customerID )
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+	public boolean newCustomer(int id, int customerID) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
-			enlist(id,"Flight X");
-			enlist(id,"Hotel X");
-			enlist(id,"Car X");
-			System.out.println("Lock granted");
-		  	boolean result;
-		  	
-		  	if(rmCar.newCustomer(id,customerID)){
-		  		if(rmFlight.newCustomer(id,customerID)){
-		  			if(rmHotel.newCustomer(id,customerID)){
-		  				System.out.println("Lock granted");
-						return true;
+			if (lm.Lock(id, ("customer" + customerID).trim().toString(),
+					LockManager.WRITE)) {
+				enlist(id, "Flight X");
+				enlist(id, "Hotel X");
+				enlist(id, "Car X");
+				System.out.println("Lock granted");
+				boolean result;
+
+				if (rmCar.newCustomer(id, customerID)) {
+					if (rmFlight.newCustomer(id, customerID)) {
+						if (rmHotel.newCustomer(id, customerID)) {
+							System.out.println("Lock granted");
+							return true;
+						} else {
+							return false;
+						}
+					} else {
+						return false;
 					}
-					else{
+				} else {
 					return false;
-					}
 				}
-				else{
+
+			} else {
 				return false;
-				}
 			}
-			else{
-			return false;
-			}
-			
-		  	
-			
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+		} catch (DeadlockException e) {
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
-
-	// Deletes customer from the database. 
+	// Deletes customer from the database.
 	public boolean deleteCustomer(int id, int customerID)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Flight X");
-			enlist(id,"Car X");
-			enlist(id,"Hotel X");
-			boolean result;
-		  	if(rmCar.deleteCustomer(id,customerID)){
-		  		if(rmFlight.deleteCustomer(id,customerID)){
-		  			if(rmHotel.deleteCustomer(id,customerID)){
-		  				System.out.println("Lock granted");
-						return true;
+			if (lm.Lock(id, ("customer" + customerID).trim().toString(),
+					LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Flight X");
+				enlist(id, "Car X");
+				enlist(id, "Hotel X");
+				boolean result;
+				if (rmCar.deleteCustomer(id, customerID)) {
+					if (rmFlight.deleteCustomer(id, customerID)) {
+						if (rmHotel.deleteCustomer(id, customerID)) {
+							System.out.println("Lock granted");
+							return true;
+						} else {
+							return false;
+						}
+					} else {
+						return false;
 					}
-					else{
+				} else {
 					return false;
-					}
 				}
-				else{
+
+			} else {
 				return false;
-				}
 			}
-			else{
-			return false;
-			}
-			
-
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
-
-	// Adds car reservation to this customer. 
+	// Adds car reservation to this customer.
 	public boolean reserveCar(int id, int customerID, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Car X");
-			return rmCar.reserveCar(id, customerID, location);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "car" + location.trim().toString(),
+					LockManager.WRITE)
+					&& lm.Lock(id, ("customer" + customerID).trim().toString(),
+							LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Car X");
+				return rmCar.reserveCar(id, customerID, location);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
 
-
-	// Adds room reservation to this customer. 
+	// Adds room reservation to this customer.
 	public boolean reserveRoom(int id, int customerID, String location)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
-			System.out.println("Lock granted");
-			enlist(id,"Room X");
-			return rmHotel.reserveRoom(id, customerID, location);
-		}
-		else{
-			return false;
-		}
-		}catch(DeadlockException e){
+			if (lm.Lock(id, "hotel" + location.trim().toString(),
+					LockManager.WRITE)
+					&& lm.Lock(id, ("customer" + customerID).trim().toString(),
+							LockManager.WRITE)) {
+				System.out.println("Lock granted");
+				enlist(id, "Room X");
+				return rmHotel.reserveRoom(id, customerID, location);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
 			System.out.println(e.getMessage());
 			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
 			abort(id);
 			throw e;
 		}
 	}
-	
-	// Adds flight reservation to this customer.  
+
+	// Adds flight reservation to this customer.
 	public boolean reserveFlight(int id, int customerID, int flightNum)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-		try{
-		if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
+			throws RemoteException, TransactionAbortedException,
+			InvalidTransactionException, Exception {
+		try {
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
 			}
-		if(lm.Lock (id, ("flight"+flightNum).trim().toString(), LockManager.WRITE) && lm.Lock (id, ("customer"+customerID).trim().toString(), LockManager.WRITE)){
-			enlist(id,"Flight X");
-			System.out.println("Lock granted");
-			return rmFlight.reserveFlight(id, customerID, flightNum);
+			if (lm.Lock(id, ("flight" + flightNum).trim().toString(),
+					LockManager.WRITE)
+					&& lm.Lock(id, ("customer" + customerID).trim().toString(),
+							LockManager.WRITE)) {
+				enlist(id, "Flight X");
+				System.out.println("Lock granted");
+				return rmFlight.reserveFlight(id, customerID, flightNum);
+			} else {
+				return false;
+			}
+		} catch (DeadlockException e) {
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
+			abort(id);
+			throw e;
 		}
-		else{
+	}
+
+	/* reserve an itinerary */
+	public boolean itinerary(int id, int customer, Vector flightNumbers,
+			String location, boolean Car, boolean Room) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		boolean result = true;
+		try {
+			if (Car) {
+				if (!isValid(id)) {
+					throw new InvalidTransactionException(id,
+							"Either your transaction has been timed out or given transaction Id is not valid");
+				}
+				lm.Lock(id, "car" + location.trim().toString(),
+						LockManager.WRITE);
+				enlist(id, "Car X");
+			}
+			if (Room) {
+				if (!isValid(id)) {
+					throw new InvalidTransactionException(id,
+							"Either your transaction has been timed out or given transaction Id is not valid");
+				}
+				lm.Lock(id, "hotel" + location.trim().toString(),
+						LockManager.WRITE);
+				enlist(id, "Hotel X");
+			}
+			if (!isValid(id)) {
+				throw new InvalidTransactionException(id,
+						"Either your transaction has been timed out or given transaction Id is not valid");
+			}
+			for (int i = 0; i < flightNumbers.size(); i++) {
+				lm.Lock(id, ("flight" + flightNumbers.elementAt(i)).trim()
+						.toString(), LockManager.WRITE);
+				enlist(id, "Flight X");
+			}
+
+			System.out.println("Lock granted");
+			if (Car) {
+				result = rmCar.itinerary(id, customer, flightNumbers, location,
+						Car, Room);
+				System.out.println("car result" + result);
+			}
+			if (result == false)
+				abort(id);
+
+			if (result == true) {
+				result = rmFlight.itinerary(id, customer, flightNumbers,
+						location, Car, Room);
+				System.out.println("flightresult" + result);
+			}
+
+			if (result == false)
+				abort(id);
+
+			if ((false != result) && Room) {
+				result = rmHotel.itinerary(id, customer, flightNumbers,
+						location, Car, Room);
+				System.out.println("room reserved" + result);
+			}
+
+			if (result == false)
+				abort(id);
+
+			return result;
+		} catch (DeadlockException e) {
+			System.out.println(e.getMessage());
+			abort(id);
+			throw new TransactionAbortedException(
+					"Server could not process your request. Transaction " + id
+							+ " has been aborted!");
+		}/*
+		 * catch(TransactionAbortedException e){
+		 * System.out.println(e.getMessage()); abort(id); throw new
+		 * TransactionAbortedException
+		 * ("Server could not process your request. Transaction "
+		 * +id+" has been aborted!"); }
+		 */catch (Exception e) {
+			abort(id);
+			throw e;
+		}
+	}
+
+	public int start() throws RemoteException {
+		xID = xID + 1;
+		addToTracker(xID);
+		addToTTL(xID);
+		System.out.println("New xID is: " + xID);
+		return xID;
+	}
+
+	public boolean commit(int transactionId) throws RemoteException,
+			TransactionAbortedException, InvalidTransactionException, Exception {
+		try {
+			if ((rmCar.commit(transactionId) == true)
+					&& (rmFlight.commit(transactionId) == true)
+					&& (rmHotel.commit(transactionId) == true)) {
+				removeFromTTL(transactionId);
+				removeFromTracker(transactionId);
+				lm.UnlockAll(transactionId);
+				return true;
+			} else {
+				removeFromTTL(transactionId);
+				removeFromTracker(transactionId);
+				lm.UnlockAll(transactionId);
+				throw new TransactionAbortedException(
+						"Server could not process your request. Transaction "
+								+ transactionId + " has been aborted!");
+			}
+
+		}
+		/*
+		 * catch(InvalidTransactionException e){ lm.UnlockAll(transactionId);
+		 * throw new InvalidTransactionException(
+		 * "Server could not process your request. Transaction "
+		 * +transactionId+" is invalid!");
+		 * 
+		 * }
+		 */
+		catch (Exception e) {
+			abort(transactionId);
+			throw e;
+		}
+	}
+
+	public void abort(int transactionId) throws RemoteException,
+			InvalidTransactionException, Exception {
+		try {
+
+			rmCar.abort(transactionId);
+			rmFlight.abort(transactionId);
+			rmHotel.abort(transactionId);
+			removeFromTracker(transactionId);
+			removeFromTTL(transactionId);
+			lm.UnlockAll(transactionId);
+			System.out.println("All Locks unlocked for transaction: "+transactionId);
+		}
+		/*
+		 * catch(InvalidTransactionException e){ lm.UnlockAll(transactionId);
+		 * throw new InvalidTransactionException(
+		 * "Server could not process your request. Transaction "
+		 * +transactionId+" is invalid!"); }
+		 */
+		catch (Exception e) {
+			removeFromTTL(transactionId);
+			removeFromTracker(transactionId);
+			lm.UnlockAll(transactionId);
+			throw e;
+		}
+
+	}
+
+	public void run() {
+		try {
+			while (true) {
+				Thread.sleep(1000);
+				Enumeration e = ttlTable.keys();
+					//System.out.println("Entering run");
+					for (; e.hasMoreElements();) {
+						Integer key = (Integer)(e.nextElement());
+						//System.out.println("Key: "+key);
+						Integer ttlObj = (Integer) ttlTable.get(key);
+						if(ttlObj != null){
+						int ttl = ttlObj.intValue();
+						//System.out.println(ttl);
+						if (ttl <= 0) {
+							System.out.println("Connection timed out due to inactivity. Aborting Transaction :" + key);
+							removeFromTTL(key);
+							removeFromTracker(key);
+							abort(key.intValue());
+
+						} else {
+							ttl -= 1000;
+							ttlTable.put(key, ttl);
+						}
+					
+					}
+						
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	void removeFromTTL(int xId) {
+		if(ttlTable.remove(xId)!=null){
+			System.out.println("successfully removed");
+		}
+
+	}
+
+	void addToTTL(int xId) {
+		System.out.println("added to ttl table");
+		ttlTable.put(xId, new Integer(ResourceManagerImpl.maxTTL));
+	}
+
+	public boolean shutdown() throws RemoteException {
+
+		if (rmTracker.isEmpty()) {
+
+			if (rmCar.shutdown() && rmFlight.shutdown() && rmHotel.shutdown()) {
+
+				Shutdown shut = new Shutdown();
+				Thread t = new Thread(shut);
+				t.start();
+				return true;
+			} else {
+				return false;
+			}
+
+		} else {
 			return false;
 		}
-		}catch(DeadlockException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
-			abort(id);
-			throw e;
-		}
-	}
-	
-	/* reserve an itinerary */
-    public boolean itinerary(int id,int customer,Vector flightNumbers,String location,boolean Car,boolean Room)
-		throws RemoteException, TransactionAbortedException, InvalidTransactionException, Exception
-	{
-    	boolean result = true;
-		try{
-			if(Car){
-				if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
-				}
-				lm.Lock (id, "car"+location.trim().toString(), LockManager.WRITE);
-				enlist(id,"Car X");
-			}
-			if(Room){
-				if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
-				}
-				lm.Lock (id, "hotel"+location.trim().toString(), LockManager.WRITE);
-				enlist(id,"Hotel X");
-			}
-			if(!isValid(id)){
-				throw new InvalidTransactionException(id,"Transaction Id is not valid");
-			}
-			for(int i=0;i<flightNumbers.size();i++){
-				lm.Lock (id, ("flight"+flightNumbers.elementAt(i)).trim().toString(), LockManager.WRITE);
-				enlist(id,"Flight X");
-			}
-			
-			System.out.println("Lock granted");
-			if(Car)
-		    		{
-		    		result = rmCar.itinerary(id, customer, flightNumbers, location, Car, Room);
-		    		System.out.println("car result"+result);
-		    		}
-		    	if(result == false)
-		    		abort(id);
-		    		
-		    	if(result == true){
-		    		result = rmFlight.itinerary(id, customer, flightNumbers, location, Car, Room);
-		    		System.out.println("flightresult"+result);
-		    		}
-		    	
-		    	if(result == false)
-		    		abort(id);
-		    	
-		    	if((false != result) && Room)
-		    	{
-		    		result = rmHotel.itinerary(id, customer, flightNumbers, location, Car, Room);
-		    		System.out.println("room reserved"+result);
-		    	}
-			
-		    	if(result == false)
-		    		abort(id);
-		
-			return result;  
-		}catch(DeadlockException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}/*catch(TransactionAbortedException e){
-			System.out.println(e.getMessage());
-			abort(id);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+id+" has been aborted!");
-		}*/catch(Exception e){
-			abort(id);
-			throw e;
-		}
-    }
-    
-    public int start() throws RemoteException{
-  	xID = xID + 1;
-  	addToTracker(xID);
-  	addToTTL(xID);
-  	System.out.println("New xID is: "+xID);
-	return xID;
-    }
-    
-    public boolean commit(int transactionId) throws RemoteException,TransactionAbortedException,InvalidTransactionException, Exception{
-   	 try{
-		if((rmCar.commit(transactionId) == true ) && (rmFlight.commit(transactionId) == true) && (rmHotel.commit(transactionId) == true)){
-	    		removeFromTracker(transactionId);
-			lm.UnlockAll(transactionId);
-			return true;
-		}
-		else{
-	    		removeFromTracker(transactionId);
-			lm.UnlockAll(transactionId);
-			throw new TransactionAbortedException("Server could not process your request. Transaction "+transactionId+" has been aborted!");
-		}
-	
-			
-	}
-	/*
-	catch(InvalidTransactionException e){
-		lm.UnlockAll(transactionId);
-			throw new InvalidTransactionException("Server could not process your request. Transaction "+transactionId+" is invalid!");
-	
-	}
-	*/
-	catch(Exception e){
-		abort(transactionId);
-		throw e;
-	}
-    }
-    
-    public void abort(int transactionId) throws RemoteException,InvalidTransactionException, Exception{
-    	try{
-	    	
-	    	rmCar.abort(transactionId);    
-	    	rmFlight.abort(transactionId);    
-	    	rmHotel.abort(transactionId);
-	    	removeFromTracker(transactionId);
-		removeFromTTL(transactionId);
-	    	lm.UnlockAll(transactionId);    
-	}
-	/*
-	catch(InvalidTransactionException e){
-	    	lm.UnlockAll(transactionId);    
-		throw new InvalidTransactionException("Server could not process your request. Transaction "+transactionId+" is invalid!");
-	}
-	*/
-	catch(Exception e){
-	    	removeFromTracker(transactionId);
-	    	lm.UnlockAll(transactionId);    
-		throw e;
-	}
-	
-    }    
-    
-    
- public void run(){
- 	try{
- 		Thread.sleep(1000);
-		synchronized (this.ttlTable){ 
-			for(Enumeration e= ttlTable.keys();e.hasMoreElements();){
-				String key=(String)(e.nextElement());
-				Integer ttlObj=(Integer)ttlTable.get(key);
-				int ttl=ttlObj.intValue();
-				if(ttl<=0){
-					System.out.println("Aborting Transaction :"+ key);
-					abort(Integer.parseInt(key));
-				
-				}
-				else{
-					ttl-=1000;
-					ttlTable.put(key,ttl);
-				}
-			}	 	
-		}
-	}catch(Exception e){
-		e.printStackTrace();
-	}
- }
- 
- void removeFromTTL(int xId){
- 	ttlTable.remove(Integer.toString(xId));
- 	
- }
- 
- void addToTTL(int xId){
- 	ttlTable.put(xId,this.maxTTL);
- }
- public boolean shutdown() throws RemoteException{
- 	
- 	if(rmTracker.isEmpty()){
- 		
- 		if(rmCar.shutdown()&&rmFlight.shutdown()&&rmHotel.shutdown()){
- 		
- 			Shutdown shut =new Shutdown();
- 	 		Thread t=new Thread(shut);
- 	 		t.start();
- 			return true;		
- 		}
- 		else{
- 			return false;
- 		}
- 		
- 				
- 	}
- 	else {
- 		return false;
- 	}
-	
- }
- 
- 
- public void addToTracker(int xid){
- 	//creates hashtable entry for new transaction id
- 	Vector rmValues=new Vector();
- 	rmTracker.put(xid,(Vector)rmValues);
- }
- 
- public void enlist(int xid,String rmVal){
- 	Vector vec = (Vector) rmTracker.get(xid);
- 	vec.add(rmVal);
- 	rmTracker.put(xid,vec);
- }
 
-public boolean isValid(int xid){
-	return rmTracker.containsKey(xid);
-}
- public void removeFromTracker(int xid){
- 	rmTracker.remove(xid);
- }
+	}
+
+	public void addToTracker(int xid) {
+		// creates hashtable entry for new transaction id
+		Vector rmValues = new Vector();
+		rmTracker.put(xid, (Vector) rmValues);
+	}
+
+	public void enlist(int xid, String rmVal) {
+		ttlTable.put(xid, ResourceManagerImpl.maxTTL);
+		Vector vec = (Vector) rmTracker.get(xid);
+		vec.add(rmVal);
+		rmTracker.put(xid, vec);
+	}
+
+	public boolean isValid(int xid) {
+		return rmTracker.containsKey(xid);
+	}
+
+	public void removeFromTracker(int xid) {
+		rmTracker.remove(xid);
+	}
 
 }
-
