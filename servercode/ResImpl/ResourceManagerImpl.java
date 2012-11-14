@@ -954,10 +954,6 @@ public class ResourceManagerImpl
 	    	rmFlight.abort(transactionId);    
 	    	rmHotel.abort(transactionId);
 	    	removeFromTracker(transactionId);
-<<<<<<< HEAD
-	    	
-=======
->>>>>>> 2dd2bb8d9c8e261538425d84eb7204e480bd66e8
 		removeFromTTL(transactionId);
 	    	lm.UnlockAll(transactionId);    
 	}
