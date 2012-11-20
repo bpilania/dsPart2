@@ -21,12 +21,13 @@ public class FileHandler{
 
 
 
-	private DataInputStream openR(String fileName){
+	private BufferedReader openR(String fileName){
 		DataInputStream d=null;	
 		try{
 			FileInputStream in=new FileInputStream(fileName);
 			d=new DataInputStream(in);
-			return d;
+			BufferedReader br=new BufferedReader(d);
+			return br;
 		}catch(Exception  e){
 			e.printStackTrace();
 		}
@@ -52,6 +53,7 @@ public class FileHandler{
 	}
 
 	RMHashtable recover(String fileName){
+		
 		return null;
 	}
 
