@@ -1,10 +1,23 @@
 package fileHandler;
 import java.io.*;
 import ResImpl.*;
+import java.util.*;
 
 
 public class FileHandler{
 
+	/*public static void main(String args[]){
+		FileHandler file=new FileHandler();
+		file.write("test.txt","key data");
+		file.write("test.txt","last line");
+		System.out.println(file.read("test.txt"));
+		System.out.println(file.read("test.txt","key"));
+		RMHashtable hash= file.recover("test.txt");
+		for(Enumeration e=hash.elements();e.hasMoreElements();){
+			System.out.println(e.nextElement());
+		}
+	}
+	*/
 	private BufferedWriter openW(String fileName ){
 		FileWriter fstream=null;
 		BufferedWriter br=null;
@@ -49,7 +62,7 @@ public class FileHandler{
 		}
 	}
 
-	String Read(String fileName,String key){	// read on basis of key
+	String read(String fileName,String key){	// read on basis of key
 		BufferedReader in=openR(fileName);
 		String tempArr[]=new String[2];
 		String temp=null;
@@ -68,7 +81,7 @@ public class FileHandler{
 		
 		return null;
 	}
-	String Read(String fileName){	//read last line
+	String read(String fileName){	//read last line
 		BufferedReader in=openR(fileName);
 		String temp,lastLine=null;
 		try{
@@ -96,7 +109,7 @@ public class FileHandler{
 			while(temp!=null){
 				tempArr=temp.split(" ");
 				hash.put(tempArr[0],tempArr[1]);
-			
+				temp=br.readLine();
 			}
 			br.close();
 		}catch(Exception e){
